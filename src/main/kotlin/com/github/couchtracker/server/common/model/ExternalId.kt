@@ -36,3 +36,4 @@ data class ExternalId(val provider: String, val id: String) {
     }
 }
 
+fun TmdbId(id : Int) = ExternalId("tmdb", id.toString())

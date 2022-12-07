@@ -1,18 +1,22 @@
 package com.github.couchtracker.server.common.model
 
-import com.github.couchtracker.server.common.serializers.LocaleSerializer
 import kotlinx.serialization.Serializable
 import java.util.Locale
+
+val SUPPORTED_LANGUAGES = listOf("da", "nl", "en", "fi", "fr", "de", "hu", "it", "nb", "pt", "ro", "ru", "es", "sv", "tr")
 
 typealias Translations = List<Translation>
 
 @Serializable
 data class Translation(
-    @Serializable(with = LocaleSerializer::class)
-    val language: Locale,
+    val language: String,
     val value: String
-)
+) {
+    init {
+        check(language in SUPPORTED_LANGUAGES)
+    }
+}
 
 fun translationsOf(vararg translations: Pair<String, String>): Translations {
-    return translations.map { Translation(Locale.forLanguageTag(it.first), it.second) }
+    return translations.map { Translation(it.first, it.second) }
 }

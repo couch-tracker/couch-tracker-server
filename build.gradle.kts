@@ -30,6 +30,8 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.4.5")
     implementation("org.litote.kmongo:kmongo-coroutine-serialization:4.8.0")
     implementation("org.litote.kmongo:kmongo-id-serialization:4.8.0")
+
+    implementation("com.uwetrottmann.tmdb2:tmdb-java:2.8.1")
 }
 
 tasks.test {
