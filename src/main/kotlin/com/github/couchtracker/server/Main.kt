@@ -15,13 +15,13 @@ import org.litote.kmongo.reactivestreams.KMongo
 import org.litote.kmongo.coroutine.*
 
 fun main() {
-    val client = KMongo.createClient("mongodb://localhost:27017").coroutine
-    val db = client.getDatabase("couch-tracker")
+    val client = KMongo.createClient(Config.Mongo.connectionUrl).coroutine
+    val db = client.getDatabase(Config.Mongo.databaseName)
     runBlocking {
         db.setup()
     }
 
-    embeddedServer(Netty, port = 8080) {
+    embeddedServer(Netty, port = Config.Web.port) {
         install(CallLogging)
         install(RequestValidation)
         install(ContentNegotiation) {
