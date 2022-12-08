@@ -3,6 +3,7 @@ package com.github.couchtracker.server
 import com.github.couchtracker.server.db.model.ShowDbo
 import com.github.couchtracker.server.db.model.ShowOrderingDbo
 import com.github.couchtracker.server.db.model.UserDbo
+import com.github.couchtracker.server.api.tmdb.TmdbApisCache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.coroutineScope
@@ -20,7 +21,7 @@ private val DBOS = setOf(
 
 class ApplicationData(
     val connection: CoroutineDatabase,
-    val showStorage: SendChannel<GetShowMessage>,
+    val tmdbApis: TmdbApisCache?,
 ) {
     companion object {
         suspend fun create(scope: CoroutineScope): ApplicationData = coroutineScope {
@@ -30,7 +31,7 @@ class ApplicationData(
 
             ApplicationData(
                 db,
-                scope.showStorageActor(db)
+                Config.Tmdb.client()?.let { TmdbApisCache(it, scope) },
             )
         }
     }

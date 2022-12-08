@@ -1,15 +1,13 @@
 package com.github.couchtracker.server.db.model
 
-import com.github.couchtracker.server.api.model.Show
+import com.github.couchtracker.server.common.model.BaseShow
 import com.github.couchtracker.server.common.model.*
 import com.github.couchtracker.server.db.DboCompanion
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.coroutine.CoroutineDatabase
-import org.litote.kmongo.coroutine.projection
 import org.litote.kmongo.div
-import org.litote.kmongo.eq
 import org.litote.kmongo.textIndex
 
 @Serializable
@@ -20,16 +18,18 @@ data class ShowDbo(
     val externalIds: ShowExternalIds,
 
     val status: ShowStatus?,
-    val ratings: ShowRatings?,
+    val ratings: ShowRatings,
+    val videos: ShowVideos,
 ) {
 
-    suspend fun toApi(db: CoroutineDatabase) = Show(
+    fun toApi() = BaseShow(
         id = this.id,
         name = this.name,
         externalIds = this.externalIds,
         status = this.status,
         ratings = this.ratings,
-        orderings = db.showOrderings().projection(ShowOrderingDbo::id, ShowOrderingDbo::show eq this.id).toList()
+        // TODO put this somewhere
+        //  orderings = db.showOrderings().projection(ShowOrderingDbo::id, ShowOrderingDbo::show eq this.id).toList()
     )
 
     companion object : DboCompanion<ShowDbo> {
@@ -41,6 +41,13 @@ data class ShowDbo(
         }
     }
 }
+
+typealias ShowVideos = List<ShowVideo>
+
+@Serializable
+data class ShowVideo(
+    val url : String
+)
 
 fun CoroutineDatabase.shows() = ShowDbo.collection(this)
 

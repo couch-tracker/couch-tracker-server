@@ -1,11 +1,26 @@
-package com.github.couchtracker.server.tmdb
+package com.github.couchtracker.server.api.tmdb
 
-import com.github.couchtracker.server.common.model.SUPPORTED_LANGUAGES
-import com.github.couchtracker.server.common.model.ShowStatus
-import com.github.couchtracker.server.common.model.Translation
-import com.github.couchtracker.server.common.model.Translations
+import com.github.couchtracker.server.common.model.BaseShow
+import com.github.couchtracker.server.common.model.*
 import com.uwetrottmann.tmdb2.entities.Translations as TmdbTranslations
 import com.uwetrottmann.tmdb2.entities.Translations.Translation.Data
+import com.uwetrottmann.tmdb2.entities.TvShow
+
+fun TvShow.toShow(): BaseShow {
+   return BaseShow(
+        id = ExternalId("tmdb", this.id.toString()),
+        name = translations.toDbTranslations { it.name },
+        externalIds = ShowExternalIds(
+            tmdb = id.toLong(),
+            tvdb = external_ids.tvdb_id?.toLong(),
+            imdb = external_ids.imdb_id,
+        ),
+        status = status?.let { ShowStatus.fromTmdbStatus(it) },
+        ratings = ShowRatings(
+            tmdb = Rating.Tmdb(vote_average, vote_count.toLong())
+        ),
+    )
+}
 
 fun TmdbTranslations.toDbTranslations(map: (Data) -> String): Translations {
     return this.translations

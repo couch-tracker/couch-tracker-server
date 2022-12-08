@@ -1,6 +1,5 @@
 package com.github.couchtracker.server
 
-import com.github.couchtracker.server.common.model.*
 import com.github.couchtracker.server.db.model.shows
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -33,13 +32,13 @@ fun Application.couchTrackerModule() {
 
     routing {
         get("/shows") {
-            call.respond(ad.connection.shows().find().toFlow().map { it.toApi(ad.connection) }.toList())
+            call.respond(ad.connection.shows().find().toFlow().map { it.toApi() }.toList())
         }
         get("/show/{id}") {
-            val showId = call.parameters.getOrFail("id")
-            val response = CompletableDeferred<Long>()
-            ad.showStorage.send(GetShowMessage(ExternalId("tvdb", showId), response))
-            call.respond(response.await())
+            val showId = call.parameters.getOrFail("id").toInt()
+            ad.tmdbApis ?: error("No TMDB ID provided")
+            val show = ad.tmdbApis.baseShow.loadOrDownload(showId, ad.connection)
+            call.respond(show)
         }
     }
 }
