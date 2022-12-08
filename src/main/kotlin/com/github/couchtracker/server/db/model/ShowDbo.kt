@@ -2,14 +2,15 @@ package com.github.couchtracker.server.db.model
 
 import com.github.couchtracker.server.api.model.Show
 import com.github.couchtracker.server.common.model.*
-import com.github.couchtracker.server.db.showOrderings
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
+import com.github.couchtracker.server.db.DboCompanion
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.coroutine.projection
+import org.litote.kmongo.div
 import org.litote.kmongo.eq
+import org.litote.kmongo.textIndex
 
 @Serializable
 data class ShowDbo(
@@ -30,5 +31,17 @@ data class ShowDbo(
         ratings = this.ratings,
         orderings = db.showOrderings().projection(ShowOrderingDbo::id, ShowOrderingDbo::show eq this.id).toList()
     )
+
+    companion object : DboCompanion<ShowDbo> {
+
+        override fun collection(db: CoroutineDatabase) = db.getCollection<ShowDbo>("shows")
+
+        override suspend fun CoroutineCollection<ShowDbo>.setup() {
+            ensureIndex((ShowDbo::name / Translation::value).textIndex())
+        }
+    }
 }
+
+fun CoroutineDatabase.shows() = ShowDbo.collection(this)
+
 

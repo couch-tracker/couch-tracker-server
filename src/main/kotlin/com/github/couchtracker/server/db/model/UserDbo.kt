@@ -1,7 +1,9 @@
 package com.github.couchtracker.server.db.model
 
+import com.github.couchtracker.server.db.DboCompanion
 import kotlinx.serialization.SerialName
 import org.litote.kmongo.Id
+import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.coroutine.CoroutineDatabase
 
 data class UserDbo(
@@ -14,14 +16,15 @@ data class UserDbo(
     val name: String,
 ) {
 
-    companion object {
-        suspend fun setup(db: CoroutineDatabase) {
-            db.users().apply {
-                ensureUniqueIndex(UserDbo::username)
-                ensureUniqueIndex(UserDbo::email)
-            }
+    companion object : DboCompanion<UserDbo> {
+
+        override fun collection(db: CoroutineDatabase) = db.getCollection<UserDbo>("users")
+
+        override suspend fun CoroutineCollection<UserDbo>.setup() {
+            ensureUniqueIndex(UserDbo::username)
+            ensureUniqueIndex(UserDbo::email)
         }
     }
 }
 
-fun CoroutineDatabase.users() = this.getCollection<UserDbo>("users")
+fun CoroutineDatabase.users() = UserDbo.collection(this)
