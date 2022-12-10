@@ -2,6 +2,7 @@ package com.github.couchtracker.server.common.model
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -29,11 +30,12 @@ data class ExternalId(val provider: String, val id: String) {
         }
 
         override fun deserialize(decoder: Decoder): ExternalId {
-            val match = REGEX.matchEntire(decoder.decodeString())
-            check(match != null)
+            val decodedString = decoder.decodeString()
+            val match = REGEX.matchEntire(decodedString)
+                ?: throw SerializationException("Invalid input '$decodedString', should be in the format '<provider>:<id>'")
             return ExternalId(match.groupValues[1], match.groupValues[2])
         }
     }
 }
 
-fun TmdbId(id : Int) = ExternalId("tmdb", id.toString())
+fun TmdbId(id: Int) = ExternalId("tmdb", id.toString())
