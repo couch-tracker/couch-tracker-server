@@ -1,0 +1,4 @@
+port = 8080
+
+[mongo]
+connection-url = "mongodb://localhost:27017"

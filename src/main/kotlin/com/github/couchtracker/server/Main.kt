@@ -11,24 +11,30 @@ import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.util.*
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.runBlocking
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("Main")
 
 fun main() {
+    val config = Config.load()
+    logger.info("Detected configuration: {}", config)
     embeddedServer(
         Netty,
-        port = Config.Web.port,
-        module = Application::couchTrackerModule
+        port = config.port,
+        host = config.host,
+        module = { couchTrackerModule(config) }
     ).start(wait = true)
 }
 
-fun Application.couchTrackerModule() {
+fun Application.couchTrackerModule(config: Config) {
     install(CallLogging)
     install(RequestValidation)
     install(ContentNegotiation) { json() }
 
-    val ad = runBlocking { ApplicationData.create(this@couchTrackerModule) }
+    val ad = runBlocking { ApplicationData.create(this@couchTrackerModule, config) }
 
     routing {
         get("/shows") {
