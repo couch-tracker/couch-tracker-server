@@ -34,6 +34,8 @@ dependencies {
     implementation("org.litote.kmongo:kmongo-id-serialization:4.8.0")
 
     implementation("com.uwetrottmann.tmdb2:tmdb-java:2.8.1")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 }
 
 tasks.test {

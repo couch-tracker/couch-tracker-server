@@ -1,9 +1,10 @@
 package com.github.couchtracker.server.api.tmdb
 
 import com.github.couchtracker.server.common.model.BaseShow
-import com.github.couchtracker.server.api.ApiCallCache
 import com.github.couchtracker.server.api.ApiItem
 import com.github.couchtracker.server.api.ShowApis
+import com.github.couchtracker.server.common.cacheActor
+import com.github.couchtracker.server.common.get
 import com.github.couchtracker.server.common.makeNotNull
 import com.github.couchtracker.server.common.model.ExternalId
 import com.github.couchtracker.server.db.model.ShowDbo
@@ -17,10 +18,15 @@ import kotlinx.coroutines.CoroutineScope
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq
 import retrofit2.await
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 class TmdbApisCache(val client: Tmdb, scope: CoroutineScope) : ShowApis<Int> {
 
-    private val showCache = ApiCallCache<Int, TvShow>(scope) { id ->
+    private val showCache = scope.cacheActor<Int, TvShow>(
+        expireTimeForSuccess = 1.hours,
+        expireTimeForFailures = 1.minutes,
+    ) { id ->
         client
             .tvService()
             .tv(

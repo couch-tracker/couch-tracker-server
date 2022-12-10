@@ -2,13 +2,24 @@ package com.github.couchtracker.server.common
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-suspend fun <T> Deferred<T>.replyTo(completableDeferred: CompletableDeferred<T>) {
+suspend fun <T> CompletableDeferred<T>.reply(f:suspend () -> T){
     val value = try {
-        await()
+        f()
     } catch (e: Throwable) {
-        completableDeferred.completeExceptionally(e)
+        completeExceptionally(e)
         return
     }
-    completableDeferred.complete(value)
+    complete(value)
 }
+
+/**
+ * Whether this Job has completed successfully.
+ *
+ * Will throw [IllegalStateException] if the Job hasn't completed yet.
+ *
+ * @see [kotlinx.coroutines.Job.isCompleted]`
+ */
+@OptIn(ExperimentalCoroutinesApi::class)
+fun <T> Deferred<T>.hasCompletedSuccessfully() = getCompletionExceptionOrNull() == null
