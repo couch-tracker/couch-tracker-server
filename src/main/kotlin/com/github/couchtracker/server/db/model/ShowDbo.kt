@@ -23,7 +23,6 @@ data class ShowDbo(
 
     val status: ShowStatus?,
     val ratings: ShowRatings,
-    val videos: ShowVideos,
 ) {
 
     fun toApi() = Show(
@@ -45,13 +44,6 @@ data class ShowDbo(
         }
     }
 }
-
-typealias ShowVideos = List<ShowVideo>
-
-@Serializable
-data class ShowVideo(
-    val url : String
-)
 
 fun CoroutineDatabase.shows() = ShowDbo.collection(this)
 

@@ -6,10 +6,10 @@ import com.sksamuel.hoplite.addFileSource
 import com.sksamuel.hoplite.sources.EnvironmentVariablesPropertySource
 
 data class Config(
-    val tmdb: Tmdb = Tmdb(),
+    val tmdb: Tmdb? = null,
     val mongo: Mongo,
     val port: Int = 80,
-    val host: String = "0.0.0.0"
+    val host: String = "0.0.0.0",
 ) {
     data class Mongo(
         val connectionUrl: String,
@@ -17,7 +17,7 @@ data class Config(
     )
 
     data class Tmdb(
-        val apiKey: Secret? = null,
+        val apiKey: Secret,
     )
 
     companion object {

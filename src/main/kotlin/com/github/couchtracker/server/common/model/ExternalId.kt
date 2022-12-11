@@ -10,11 +10,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 @Serializable(with = ExternalId.Serializer::class)
-data class ExternalId(val provider: String, val id: String) {
-
-    init {
-        require(provider.all { it in 'a'..'z' })
-    }
+data class ExternalId(val provider: ExternalIdProvider, val id: String) {
 
     override fun toString(): String {
         return "${provider}:${id}"
@@ -33,9 +29,16 @@ data class ExternalId(val provider: String, val id: String) {
             val decodedString = decoder.decodeString()
             val match = REGEX.matchEntire(decodedString)
                 ?: throw SerializationException("Invalid input '$decodedString', should be in the format '<provider>:<id>'")
-            return ExternalId(match.groupValues[1], match.groupValues[2])
+            return ExternalId(ExternalIdProvider(match.groupValues[1]), match.groupValues[2])
         }
     }
 }
 
-fun TmdbId(id: Int) = ExternalId("tmdb", id.toString())
+@JvmInline
+value class ExternalIdProvider(val value: String) {
+    init {
+        require(value.all { it in 'a'..'z' })
+    }
+
+    override fun toString() = value
+}
