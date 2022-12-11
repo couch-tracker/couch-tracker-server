@@ -1,9 +1,10 @@
-package com.github.couchtracker.server.common.model
+package com.github.couchtracker.server.common.model.shows
 
+import com.github.couchtracker.server.common.model.*
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BaseShow(
+data class Show(
     val id: ExternalId,
     val name: Translations,
     val externalIds: ShowExternalIds,

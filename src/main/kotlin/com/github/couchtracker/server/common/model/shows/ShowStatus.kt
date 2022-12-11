@@ -1,4 +1,4 @@
-package com.github.couchtracker.server.common.model
+package com.github.couchtracker.server.common.model.shows
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -7,13 +7,6 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-
-@Serializable
-data class ShowExternalIds(
-    val tvdb: Long? = null,
-    val tmdb: Long? = null,
-    val imdb: String? = null,
-)
 
 @Serializable(with = ShowStatus.Serializer::class)
 enum class ShowStatus(val id: String) {
@@ -38,9 +31,3 @@ enum class ShowStatus(val id: String) {
         }
     }
 }
-
-@Serializable
-data class ShowRatings(
-    val tmdb : Rating.Tmdb? = null,
-    val tvdb : Rating.Tvdb? = null,
-)

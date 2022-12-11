@@ -1,6 +1,6 @@
 package com.github.couchtracker.server.api.tmdb
 
-import com.github.couchtracker.server.common.model.BaseShow
+import com.github.couchtracker.server.common.model.shows.Show
 import com.github.couchtracker.server.api.ApiItem
 import com.github.couchtracker.server.api.ShowApis
 import com.github.couchtracker.server.common.cacheActor
@@ -15,6 +15,7 @@ import com.uwetrottmann.tmdb2.entities.AppendToResponse
 import com.uwetrottmann.tmdb2.entities.TvShow
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem
 import kotlinx.coroutines.CoroutineScope
+import org.litote.kmongo.coroutine.CoroutineClient
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq
 import retrofit2.await
@@ -31,27 +32,37 @@ class TmdbApisCache(val client: Tmdb, scope: CoroutineScope) : ShowApis<Int> {
             .tvService()
             .tv(
                 id, "eng", AppendToResponse(
+                    AppendToResponseItem.ALTERNATIVE_TITLES,
+                    AppendToResponseItem.CREDITS,
+                    AppendToResponseItem.EXTERNAL_IDS,
+                    AppendToResponseItem.IMAGES,
+                    AppendToResponseItem.KEYWORDS,
+                    AppendToResponseItem.RELEASE_DATES,
                     AppendToResponseItem.TRANSLATIONS,
-                    AppendToResponseItem.EXTERNAL_IDS
+                    AppendToResponseItem.VIDEOS,
                 )
             )
             .makeNotNull()
             .await()
     }
 
-    override val baseShow = object : ApiItem<Int, BaseShow>() {
-        override suspend fun load(key: Int, db: CoroutineDatabase): BaseShow? {
+    override val show = object : ApiItem<Int, Show>() {
+        override suspend fun load(key: Int, db: CoroutineDatabase): Show? {
             return db
                 .shows()
                 .findOne(ShowDbo::id eq ExternalId("tmdb", key.toString()))
                 ?.toApi()
         }
 
-        override suspend fun download(key: Int): BaseShow {
+        override suspend fun download(key: Int): Show {
             return showCache.get(key).toShow()
         }
     }
 
     override val showVideos: ApiItem<Int, ShowVideos>
         get() = TODO("Not yet implemented")
+
+    override suspend fun save(id: Int, client: CoroutineClient) {
+
+    }
 }

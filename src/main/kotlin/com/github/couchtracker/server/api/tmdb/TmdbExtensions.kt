@@ -1,13 +1,16 @@
 package com.github.couchtracker.server.api.tmdb
 
-import com.github.couchtracker.server.common.model.BaseShow
+import com.github.couchtracker.server.common.model.shows.Show
 import com.github.couchtracker.server.common.model.*
+import com.github.couchtracker.server.common.model.shows.ShowExternalIds
+import com.github.couchtracker.server.common.model.shows.ShowRatings
+import com.github.couchtracker.server.common.model.shows.ShowStatus
 import com.uwetrottmann.tmdb2.entities.Translations as TmdbTranslations
 import com.uwetrottmann.tmdb2.entities.Translations.Translation.Data
 import com.uwetrottmann.tmdb2.entities.TvShow
 
-fun TvShow.toShow(): BaseShow {
-   return BaseShow(
+fun TvShow.toShow(): Show {
+   return Show(
         id = ExternalId("tmdb", this.id.toString()),
         name = translations.toDbTranslations { it.name },
         externalIds = ShowExternalIds(

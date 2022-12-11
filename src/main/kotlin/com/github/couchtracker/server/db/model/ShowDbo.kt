@@ -1,7 +1,10 @@
 package com.github.couchtracker.server.db.model
 
-import com.github.couchtracker.server.common.model.BaseShow
+import com.github.couchtracker.server.common.model.shows.Show
 import com.github.couchtracker.server.common.model.*
+import com.github.couchtracker.server.common.model.shows.ShowExternalIds
+import com.github.couchtracker.server.common.model.shows.ShowRatings
+import com.github.couchtracker.server.common.model.shows.ShowStatus
 import com.github.couchtracker.server.db.DboCompanion
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -16,13 +19,14 @@ data class ShowDbo(
     val id: ExternalId,
     val name: Translations,
     val externalIds: ShowExternalIds,
+    val adult: Boolean,
 
     val status: ShowStatus?,
     val ratings: ShowRatings,
     val videos: ShowVideos,
 ) {
 
-    fun toApi() = BaseShow(
+    fun toApi() = Show(
         id = this.id,
         name = this.name,
         externalIds = this.externalIds,
