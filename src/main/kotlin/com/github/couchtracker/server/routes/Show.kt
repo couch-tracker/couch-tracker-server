@@ -1,6 +1,7 @@
 package com.github.couchtracker.server.routes
 
 import com.github.couchtracker.server.ApplicationData
+import com.github.couchtracker.server.common.validate
 import com.github.couchtracker.server.common.model.ExternalId
 import io.ktor.http.*
 import io.ktor.resources.*
@@ -18,6 +19,10 @@ private class Routes {
     @Resource("{eid}")
     data class Show(val parent: Routes, val eid: ExternalId) {
 
+        init {
+            require(eid.provider == "tmdb")
+        }
+
         @Serializable
         @Resource("videos")
         data class Videos(val parent: Show)
@@ -27,14 +32,10 @@ private class Routes {
 
 fun Route.showRoutes(ad: ApplicationData) {
     get<Routes.Show> {url ->
-        if(url.eid.provider != "tmdb") {
-            call.respond(HttpStatusCode.BadRequest)
-            return@get
+        validate( ad.tmdbApis != null) {
+            respond(HttpStatusCode.NotImplemented,"This server doesn't support TMDB.")
         }
-        if(ad.tmdbApis == null) {
-            call.respond(HttpStatusCode.NotImplemented, "This server doesn't support TMDB.")
-            return@get
-        }
+
         val show = ad.tmdbApis.show.loadOrDownload(url.eid.id.toInt(), ad.connection)
         call.respond(show)
     }

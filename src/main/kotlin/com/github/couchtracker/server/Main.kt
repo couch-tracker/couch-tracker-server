@@ -8,6 +8,7 @@ import io.ktor.server.netty.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.requestvalidation.*
+import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.resources.Resources
 import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
@@ -28,8 +29,11 @@ fun main() {
 
 fun Application.couchTrackerModule(config: Config) {
     install(CallLogging)
-    install(RequestValidation)
     install(ContentNegotiation) { json() }
+    install(RequestValidation)
+    install(StatusPages) {
+        exception<IgnoreException> { _, _ -> }
+    }
     install(Resources)
 
     val applicationData = runBlocking { ApplicationData.create(this@couchTrackerModule, config) }
@@ -38,3 +42,5 @@ fun Application.couchTrackerModule(config: Config) {
         showRoutes(applicationData)
     }
 }
+
+class IgnoreException : RuntimeException()

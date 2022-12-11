@@ -23,6 +23,7 @@ dependencies {
     // Utilities
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+
     // Ktor
     val ktorVersion = "2.1.3"
     implementation("io.ktor:ktor-server-core:$ktorVersion")
@@ -32,13 +33,18 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     implementation("io.ktor:ktor-server-resources:$ktorVersion")
+    implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
+
     // Logs
     implementation("ch.qos.logback:logback-classic:1.4.5")
+
     // Mongo
     implementation("org.litote.kmongo:kmongo-coroutine-serialization:4.8.0")
     implementation("org.litote.kmongo:kmongo-id-serialization:4.8.0")
-    // Tmdb client
+
+    // External clients
     implementation("com.uwetrottmann.tmdb2:tmdb-java:2.8.1")
+
     // Configuration parsing
     implementation("com.sksamuel.hoplite:hoplite-core:2.7.0")
     implementation("com.sksamuel.hoplite:hoplite-toml:2.7.0")
