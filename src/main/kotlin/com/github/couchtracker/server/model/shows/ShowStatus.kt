@@ -1,5 +1,6 @@
 package com.github.couchtracker.server.model.shows
 
+import com.github.couchtracker.server.common.serializers.EnumIdSerializer
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -17,17 +18,8 @@ enum class ShowStatus(val id: String) {
     PILOT_CANCELED("pilot_canceled"),
     PLANNED("planned");
 
-    object Serializer : KSerializer<ShowStatus> {
-
-        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ShowStatus", PrimitiveKind.STRING)
-
-        override fun serialize(encoder: Encoder, value: ShowStatus) {
-            encoder.encodeString(value.id)
-        }
-
-        override fun deserialize(decoder: Decoder): ShowStatus {
-            val str = decoder.decodeString()
-            return ShowStatus.values().single { it.id == str }
-        }
-    }
+    object Serializer : EnumIdSerializer<ShowStatus>(
+        enumClass = ShowStatus::class,
+        getId = { id }
+    )
 }
