@@ -61,3 +61,10 @@ tasks.withType<KotlinCompile> {
 application {
     mainClass.set("com.github.couchtracker.server.MainKt")
 }
+
+ktor {
+    fatJar {
+        archiveFileName.set("couch-tracker-server.jar")
+    }
+}
+
