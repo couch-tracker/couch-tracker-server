@@ -1,6 +1,6 @@
 package com.github.couchtracker.server.infoProviders.tmdb
 
-import com.github.couchtracker.server.common.model.ExternalId
+import com.github.couchtracker.server.model.ExternalId
 
 
 @JvmInline

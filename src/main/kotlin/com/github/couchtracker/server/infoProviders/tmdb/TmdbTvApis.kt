@@ -1,13 +1,12 @@
 package com.github.couchtracker.server.infoProviders.tmdb
 
-import com.github.couchtracker.server.common.model.shows.Show
+import com.github.couchtracker.server.model.shows.Show
 import com.github.couchtracker.server.infoProviders.ApiItem
 import com.github.couchtracker.server.infoProviders.TvApis
 import com.github.couchtracker.server.common.cacheActor
 import com.github.couchtracker.server.common.get
 import com.github.couchtracker.server.common.makeNotNull
-import com.github.couchtracker.server.common.model.ExternalId
-import com.github.couchtracker.server.common.model.Video
+import com.github.couchtracker.server.model.Video
 import com.github.couchtracker.server.db.model.ShowDbo
 import com.github.couchtracker.server.db.model.shows
 import com.github.couchtracker.server.infoProviders.ShowApis

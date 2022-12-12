@@ -1,4 +1,4 @@
-package com.github.couchtracker.server.common.model
+package com.github.couchtracker.server.model
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable

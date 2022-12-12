@@ -1,6 +1,6 @@
-package com.github.couchtracker.server.common.model.shows
+package com.github.couchtracker.server.model.shows
 
-import com.github.couchtracker.server.common.model.Rating
+import com.github.couchtracker.server.model.Rating
 import kotlinx.serialization.Serializable
 
 @Serializable

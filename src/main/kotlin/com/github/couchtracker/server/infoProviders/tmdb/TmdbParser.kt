@@ -1,10 +1,10 @@
 package com.github.couchtracker.server.infoProviders.tmdb
 
-import com.github.couchtracker.server.common.model.*
-import com.github.couchtracker.server.common.model.shows.Show
-import com.github.couchtracker.server.common.model.shows.ShowExternalIds
-import com.github.couchtracker.server.common.model.shows.ShowRatings
-import com.github.couchtracker.server.common.model.shows.ShowStatus
+import com.github.couchtracker.server.model.*
+import com.github.couchtracker.server.model.shows.Show
+import com.github.couchtracker.server.model.shows.ShowExternalIds
+import com.github.couchtracker.server.model.shows.ShowRatings
+import com.github.couchtracker.server.model.shows.ShowStatus
 import com.uwetrottmann.tmdb2.entities.TvShow
 import com.uwetrottmann.tmdb2.entities.Videos
 import com.uwetrottmann.tmdb2.enumerations.VideoType.*

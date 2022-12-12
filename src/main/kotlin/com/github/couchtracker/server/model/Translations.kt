@@ -1,7 +1,6 @@
-package com.github.couchtracker.server.common.model
+package com.github.couchtracker.server.model
 
 import kotlinx.serialization.Serializable
-import java.util.Locale
 
 val SUPPORTED_LANGUAGES = listOf("da", "nl", "en", "fi", "fr", "de", "hu", "it", "nb", "pt", "ro", "ru", "es", "sv", "tr")
 

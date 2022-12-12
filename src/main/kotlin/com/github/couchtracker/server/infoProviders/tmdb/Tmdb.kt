@@ -1,7 +1,7 @@
 package com.github.couchtracker.server.infoProviders.tmdb
 
 import com.github.couchtracker.server.Config
-import com.github.couchtracker.server.common.model.ExternalIdProvider
+import com.github.couchtracker.server.model.ExternalIdProvider
 import com.github.couchtracker.server.infoProviders.InfoProvider
 import kotlinx.coroutines.CoroutineScope
 import com.uwetrottmann.tmdb2.Tmdb as TmdbClient

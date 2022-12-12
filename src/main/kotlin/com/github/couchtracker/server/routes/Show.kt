@@ -1,9 +1,7 @@
 package com.github.couchtracker.server.routes
 
 import com.github.couchtracker.server.ApplicationData
-import com.github.couchtracker.server.common.getInfoProvider
-import com.github.couchtracker.server.common.validate
-import com.github.couchtracker.server.common.model.ExternalId
+import com.github.couchtracker.server.model.ExternalId
 import com.github.couchtracker.server.common.tvApis
 import io.ktor.http.*
 import io.ktor.resources.*

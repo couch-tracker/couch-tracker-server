@@ -2,7 +2,7 @@ package com.github.couchtracker.server.common
 
 import com.github.couchtracker.server.ApplicationData
 import com.github.couchtracker.server.IgnoreException
-import com.github.couchtracker.server.common.model.ExternalIdProvider
+import com.github.couchtracker.server.model.ExternalIdProvider
 import com.github.couchtracker.server.infoProviders.InfoProvider
 import com.github.couchtracker.server.infoProviders.TvApis
 import io.ktor.http.*

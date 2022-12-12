@@ -1,7 +1,7 @@
 package com.github.couchtracker.server.db.model
 
-import com.github.couchtracker.server.common.model.ExternalId
-import com.github.couchtracker.server.common.model.Translations
+import com.github.couchtracker.server.model.ExternalId
+import com.github.couchtracker.server.model.Translations
 import com.github.couchtracker.server.db.DboCompanion
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

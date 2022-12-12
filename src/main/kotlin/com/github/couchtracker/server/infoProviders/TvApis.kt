@@ -1,7 +1,7 @@
 package com.github.couchtracker.server.infoProviders
 
-import com.github.couchtracker.server.common.model.Video
-import com.github.couchtracker.server.common.model.shows.Show
+import com.github.couchtracker.server.model.Video
+import com.github.couchtracker.server.model.shows.Show
 
 
 interface TvApis<ID : Any> {

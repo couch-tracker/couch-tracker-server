@@ -1,10 +1,10 @@
 package com.github.couchtracker.server.db.model
 
-import com.github.couchtracker.server.common.model.shows.Show
-import com.github.couchtracker.server.common.model.*
-import com.github.couchtracker.server.common.model.shows.ShowExternalIds
-import com.github.couchtracker.server.common.model.shows.ShowRatings
-import com.github.couchtracker.server.common.model.shows.ShowStatus
+import com.github.couchtracker.server.model.shows.Show
+import com.github.couchtracker.server.model.*
+import com.github.couchtracker.server.model.shows.ShowExternalIds
+import com.github.couchtracker.server.model.shows.ShowRatings
+import com.github.couchtracker.server.model.shows.ShowStatus
 import com.github.couchtracker.server.db.DboCompanion
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

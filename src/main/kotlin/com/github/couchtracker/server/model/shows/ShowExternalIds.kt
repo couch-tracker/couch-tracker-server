@@ -1,4 +1,4 @@
-package com.github.couchtracker.server.common.model.shows
+package com.github.couchtracker.server.model.shows
 
 import kotlinx.serialization.Serializable
 
