@@ -19,21 +19,6 @@ sealed class Resolution {
         )
     }
 
-    @Serializable(with = Vertical.Serializer::class)
-    class Vertical(val height: Int) {
-        init {
-            require(height > 0)
-        }
-
-        override fun toString() = "${height}p"
-
-        object Serializer : RegexSerializer<Vertical>(
-            name = "Resolution.Vertical",
-            regex = "(\\d+)p".toRegex(),
-            deserialize = { Vertical(it.groupValues[1].toInt()) }
-        )
-    }
-
     @Serializable(with = Size.Serializer::class)
     class Size(val width: Int, val height: Int) {
         init {
