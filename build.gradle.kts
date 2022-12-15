@@ -48,6 +48,10 @@ dependencies {
     // Configuration parsing
     implementation("com.sksamuel.hoplite:hoplite-core:2.7.0")
     implementation("com.sksamuel.hoplite:hoplite-toml:2.7.0")
+
+
+    // TEST DEPENDENCIES
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
 }
 
 tasks.test {
