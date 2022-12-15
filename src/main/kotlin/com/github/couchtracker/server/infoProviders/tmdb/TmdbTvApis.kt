@@ -10,12 +10,15 @@ import com.github.couchtracker.server.model.Video
 import com.github.couchtracker.server.db.model.ShowDbo
 import com.github.couchtracker.server.db.model.shows
 import com.github.couchtracker.server.infoProviders.ShowApis
+import com.github.couchtracker.server.model.Image
+import com.github.couchtracker.server.model.shows.ShowImages
 import com.uwetrottmann.tmdb2.Tmdb as TmdbClient
 import com.uwetrottmann.tmdb2.entities.AppendToResponse
 import com.uwetrottmann.tmdb2.entities.TvShow
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem
 import kotlinx.coroutines.CoroutineScope
 import org.litote.kmongo.coroutine.CoroutineDatabase
+import org.litote.kmongo.coroutine.projection
 import org.litote.kmongo.eq
 import retrofit2.await
 import kotlin.time.Duration.Companion.hours
@@ -28,7 +31,8 @@ class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbSho
         expireTimeForFailures = 1.minutes,
     ) { id ->
         client.tvService().tv(
-            id.value, "eng", AppendToResponse(
+            // TODO APIs seem not to respect language
+            id.value, "en,null", AppendToResponse(
                 AppendToResponseItem.ALTERNATIVE_TITLES,
                 AppendToResponseItem.CREDITS,
                 AppendToResponseItem.EXTERNAL_IDS,
@@ -55,6 +59,20 @@ class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbSho
             }
         }
 
+        override val images = object : ApiItem<ShowImages<Image>>() {
+            override suspend fun load(db: CoroutineDatabase): ShowImages<Image>? {
+                return db.shows()
+                    .projection(ShowDbo::images, ShowDbo::id eq id.toExternalId())
+                    .first()
+                    ?.map { it.toApi() }
+            }
+
+            override suspend fun download(): ShowImages<Image> {
+                return showCache.get(id).images.toShowImages()
+            }
+
+        }
+
         override val videos = object : ApiItem<List<Video>>() {
             override suspend fun load(db: CoroutineDatabase): List<Video>? {
                 return null //TODO
@@ -65,4 +83,5 @@ class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbSho
             }
         }
     }
+
 }

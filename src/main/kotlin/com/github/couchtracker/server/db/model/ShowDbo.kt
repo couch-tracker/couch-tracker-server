@@ -1,11 +1,8 @@
 package com.github.couchtracker.server.db.model
 
-import com.github.couchtracker.server.model.shows.Show
 import com.github.couchtracker.server.model.*
-import com.github.couchtracker.server.model.shows.ShowExternalIds
-import com.github.couchtracker.server.model.shows.ShowRatings
-import com.github.couchtracker.server.model.shows.ShowStatus
 import com.github.couchtracker.server.db.DboCompanion
+import com.github.couchtracker.server.model.shows.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.litote.kmongo.coroutine.CoroutineCollection
@@ -23,6 +20,7 @@ data class ShowDbo(
 
     val status: ShowStatus?,
     val ratings: ShowRatings,
+    val images: ShowImages<ImageDbo> = ShowImages(),
 ) {
 
     fun toApi() = Show(

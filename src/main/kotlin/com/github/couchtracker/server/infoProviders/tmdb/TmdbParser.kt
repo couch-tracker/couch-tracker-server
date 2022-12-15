@@ -1,13 +1,13 @@
 package com.github.couchtracker.server.infoProviders.tmdb
 
 import com.github.couchtracker.server.model.*
-import com.github.couchtracker.server.model.shows.Show
-import com.github.couchtracker.server.model.shows.ShowExternalIds
-import com.github.couchtracker.server.model.shows.ShowRatings
-import com.github.couchtracker.server.model.shows.ShowStatus
+import com.github.couchtracker.server.model.shows.*
+import com.uwetrottmann.tmdb2.entities.Image as TmdbImage
+import com.uwetrottmann.tmdb2.entities.Images
 import com.uwetrottmann.tmdb2.entities.TvShow
 import com.uwetrottmann.tmdb2.entities.Videos
 import com.uwetrottmann.tmdb2.enumerations.VideoType.*
+import java.util.*
 import com.uwetrottmann.tmdb2.entities.Translations as TmdbTranslations
 import com.uwetrottmann.tmdb2.enumerations.VideoType as TmdbVideoType
 
@@ -47,6 +47,29 @@ fun TmdbVideoType.toVideoType() = when (this) {
     FEATURETTE -> VideoType.FEATURETTE
     OPENING_CREDITS -> VideoType.OPENING_CREDITS
 }
+
+fun Images.toShowImages() = ShowImages<Image>(
+    posters = this.posters.toImages(),
+    backdrops = this.backdrops.toImages(),
+    // TODO logos not exposed by library
+)
+
+fun List<TmdbImage>.toImages(): List<Image> {
+    return this.map { it.toImage() }
+}
+
+fun TmdbImage.toImage(): Image {
+    return Image(
+        width = width,
+        height = height,
+        language = if (iso_639_1 == null) null else Locale(iso_639_1),
+        url = "https://image.tmdb.org/t/p/original$file_path",
+        ratings = ImageRatings(
+            tmdb = Rating.Tmdb(vote_average, vote_count.toLong())
+        )
+    )
+}
+
 
 fun Videos.toVideos(): List<Video> {
     return this.results.mapIndexedNotNull { index, video -> video.toVideo(index) }

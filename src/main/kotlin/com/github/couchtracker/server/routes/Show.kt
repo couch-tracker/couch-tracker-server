@@ -20,6 +20,10 @@ private class Routes {
     data class Show(val parent: Routes, val eid: ExternalId) {
 
         @Serializable
+        @Resource("images")
+        data class Images(val parent: Show)
+
+        @Serializable
         @Resource("videos")
         data class Videos(val parent: Show)
     }
@@ -33,6 +37,13 @@ fun Route.showRoutes(ad: ApplicationData) {
 
         val show = showsApi.show(url.eid.id).info.loadOrDownload(ad.connection)
         call.respond(show)
+    }
+
+    get<Routes.Show.Images> { url ->
+        val showsApi = tvApis(ad, url.parent.eid.provider)
+
+        val images = showsApi.show(url.parent.eid.id).images.loadOrDownload(ad.connection)
+        call.respond(images)
     }
 
     get<Routes.Show.Videos> { url ->
