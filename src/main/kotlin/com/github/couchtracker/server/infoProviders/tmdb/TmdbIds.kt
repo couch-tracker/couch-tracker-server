@@ -1,6 +1,7 @@
 package com.github.couchtracker.server.infoProviders.tmdb
 
 import com.github.couchtracker.server.model.ExternalId
+import com.github.couchtracker.server.model.ExternalIdProvider.TMDB
 
 
 @JvmInline
@@ -9,5 +10,5 @@ value class TmdbShowId(val value: Int) {
         require(value > 0)
     }
 
-    fun toExternalId() = ExternalId(Tmdb.EXTERNAL_ID_PROVIDER, value.toString())
+    fun toExternalId() = ExternalId(TMDB, value.toString())
 }

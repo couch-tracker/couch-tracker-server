@@ -6,6 +6,10 @@ import kotlinx.serialization.Serializable
 @Serializable(with = ExternalId.Serializer::class)
 data class ExternalId(val provider: ExternalIdProvider, val id: String) {
 
+    init {
+        require(id.isNotBlank())
+    }
+
     override fun toString(): String {
         return "${provider}:${id}"
     }
@@ -16,11 +20,17 @@ data class ExternalId(val provider: ExternalIdProvider, val id: String) {
     )
 }
 
-@JvmInline
-value class ExternalIdProvider(val value: String) {
-    init {
-        require(value.all { it in 'a'..'z' })
-    }
+enum class ExternalIdProvider {
 
-    override fun toString() = value
+    TMDB;
+
+    val id = name.lowercase()
+
+    override fun toString() = id
+
+    companion object {
+        operator fun invoke(str: String) = ExternalIdProvider.values()
+            .singleOrNull { it.id == str }
+            ?: throw IllegalArgumentException("Invalid external ID provider: $str")
+    }
 }
