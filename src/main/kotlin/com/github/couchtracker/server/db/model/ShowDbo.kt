@@ -20,7 +20,7 @@ data class ShowDbo(
 
     val status: ShowStatus?,
     val ratings: ShowRatings,
-    val images: ShowImages<ImageDbo> = ShowImages(),
+    val images: ShowImages<ImageDbo>,
 ) {
 
     fun toApi() = Show(

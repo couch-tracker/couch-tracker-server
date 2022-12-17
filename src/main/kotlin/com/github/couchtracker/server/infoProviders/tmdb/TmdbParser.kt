@@ -52,6 +52,7 @@ fun Images.toShowImages() = ShowImages<Image>(
     posters = this.posters.toImages(),
     backdrops = this.backdrops.toImages(),
     // TODO logos not exposed by library
+    logos = emptyList(),
 )
 
 fun List<TmdbImage>.toImages(): List<Image> {
