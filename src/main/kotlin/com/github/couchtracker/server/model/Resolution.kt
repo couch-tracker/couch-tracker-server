@@ -1,8 +1,8 @@
 package com.github.couchtracker.server.model
 
-import com.github.couchtracker.server.common.serializers.EnumIdSerializer
 import com.github.couchtracker.server.common.serializers.RegexSerializer
 import com.github.couchtracker.server.common.serializers.SingleFieldSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -56,14 +56,24 @@ sealed class Resolution {
     }
 }
 
-@Serializable(with = ResolutionClass.Serializer::class)
-enum class ResolutionClass(val id: String) {
-    SD("sd"),
-    HQ("hq"),
-    HD("hd"),
-    FHD("fhd"),
-    FOUR_K("4k"),
-    EIGHT_K("8k");
+@Serializable
+enum class ResolutionClass {
 
-    object Serializer : EnumIdSerializer<ResolutionClass>(ResolutionClass::class, { id })
+    @SerialName("sd")
+    SD,
+
+    @SerialName("hq")
+    HQ,
+
+    @SerialName("hd")
+    HD,
+
+    @SerialName("fhd")
+    FHD,
+
+    @SerialName("4k")
+    FOUR_K,
+
+    @SerialName("8k")
+    EIGHT_K
 }

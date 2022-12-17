@@ -1,25 +1,25 @@
 package com.github.couchtracker.server.model.shows
 
-import com.github.couchtracker.server.common.serializers.EnumIdSerializer
-import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 
-@Serializable(with = ShowStatus.Serializer::class)
-enum class ShowStatus(val id: String) {
-    CANCELED("canceled"),
-    CONTINUING("continuing"),
-    ENDED("ended"),
-    IN_PRODUCTION("in_production"),
-    PILOT_CANCELED("pilot_canceled"),
-    PLANNED("planned");
+@Serializable
+enum class ShowStatus {
+    @SerialName("canceled")
+    CANCELED,
 
-    object Serializer : EnumIdSerializer<ShowStatus>(
-        enumClass = ShowStatus::class,
-        getId = { id }
-    )
+    @SerialName("continuing")
+    CONTINUING,
+
+    @SerialName("ended")
+    ENDED,
+
+    @SerialName("in_production")
+    IN_PRODUCTION,
+
+    @SerialName("pilot_canceled")
+    PILOT_CANCELED,
+
+    @SerialName("planned")
+    PLANNED()
 }

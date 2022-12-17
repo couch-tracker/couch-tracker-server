@@ -19,15 +19,13 @@ abstract class SingleFieldSerializer<T, F : Any>(
 
     private val delegate = fieldType.serializer()
 
-    override val descriptor: SerialDescriptor = object : SerialDescriptor by delegate.descriptor {
-        override val serialName = name
-    }
+    override val descriptor = SerialDescriptor(name, delegate.descriptor)
 
     override fun serialize(encoder: Encoder, value: T) {
-        return delegate.serialize(encoder, value.getField())
+        encoder.encodeSerializableValue(delegate, value.getField())
     }
 
     override fun deserialize(decoder: Decoder): T {
-        return deserialize(delegate.deserialize(decoder))
+        return deserialize(decoder.decodeSerializableValue(delegate))
     }
 }
