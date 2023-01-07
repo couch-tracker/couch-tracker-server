@@ -2,6 +2,7 @@ package com.github.couchtracker.server.model
 
 import com.github.couchtracker.server.common.serializers.RegexSerializer
 import com.github.couchtracker.server.common.serializers.SingleFieldSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -75,5 +76,8 @@ enum class ResolutionClass {
     FOUR_K,
 
     @SerialName("8k")
-    EIGHT_K
+    EIGHT_K;
+
+    @OptIn(ExperimentalSerializationApi::class)
+    val id get() = serializer().descriptor.getElementName(ordinal)
 }
