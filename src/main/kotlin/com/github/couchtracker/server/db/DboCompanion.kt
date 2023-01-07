@@ -5,7 +5,7 @@ import org.litote.kmongo.coroutine.CoroutineDatabase
 
 interface DboCompanion<T : Any> {
 
-    fun collection(db: CoroutineDatabase) : CoroutineCollection<T>
+    fun collection(db: CoroutineDatabase): CoroutineCollection<T>
 
     suspend fun CoroutineCollection<T>.setup() {
         // default: noop

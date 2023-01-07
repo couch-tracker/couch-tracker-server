@@ -8,7 +8,7 @@ import org.litote.kmongo.coroutine.CoroutineDatabase
 
 data class UserDbo(
     @SerialName("_id")
-    val id : Id<UserDbo>,
+    val id: Id<UserDbo>,
 
     val username: String,
     val email: String,

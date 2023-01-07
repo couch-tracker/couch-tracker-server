@@ -5,7 +5,7 @@ import com.github.couchtracker.server.model.Image
 import com.github.couchtracker.server.model.ImageRatings
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
-import java.util.Locale
+import java.util.*
 
 @Serializable
 data class ImageDbo(

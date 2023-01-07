@@ -4,7 +4,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-suspend fun <T> CompletableDeferred<T>.reply(f:suspend () -> T){
+suspend fun <T> CompletableDeferred<T>.reply(f: suspend () -> T) {
     val value = try {
         f()
     } catch (e: Throwable) {

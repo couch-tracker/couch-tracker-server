@@ -9,7 +9,7 @@ typealias Translations = List<Translation>
 @Serializable
 data class Translation(
     val language: String,
-    val value: String
+    val value: String,
 ) {
     init {
         check(language in SUPPORTED_LANGUAGES)

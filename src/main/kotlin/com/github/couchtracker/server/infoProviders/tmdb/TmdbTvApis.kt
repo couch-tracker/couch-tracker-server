@@ -1,20 +1,18 @@
 package com.github.couchtracker.server.infoProviders.tmdb
 
-import com.github.couchtracker.server.model.shows.Show
-import com.github.couchtracker.server.infoProviders.ApiItem
-import com.github.couchtracker.server.infoProviders.TvApis
 import com.github.couchtracker.server.common.cacheActor
 import com.github.couchtracker.server.common.get
 import com.github.couchtracker.server.common.makeNotNull
-import com.github.couchtracker.server.model.Video
 import com.github.couchtracker.server.db.model.ShowDbo
 import com.github.couchtracker.server.db.model.shows
+import com.github.couchtracker.server.infoProviders.ApiItem
 import com.github.couchtracker.server.infoProviders.ShowApis
+import com.github.couchtracker.server.infoProviders.TvApis
 import com.github.couchtracker.server.infoProviders.ids.TmdbShowId
 import com.github.couchtracker.server.model.Image
-import com.github.couchtracker.server.model.externalIds.ExternalId
+import com.github.couchtracker.server.model.Video
+import com.github.couchtracker.server.model.shows.Show
 import com.github.couchtracker.server.model.shows.ShowImages
-import com.uwetrottmann.tmdb2.Tmdb as TmdbClient
 import com.uwetrottmann.tmdb2.entities.AppendToResponse
 import com.uwetrottmann.tmdb2.entities.TvShow
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem
@@ -25,6 +23,7 @@ import org.litote.kmongo.eq
 import retrofit2.await
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import com.uwetrottmann.tmdb2.Tmdb as TmdbClient
 
 class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbShowId> {
 

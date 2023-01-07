@@ -14,7 +14,7 @@ sealed class CacheMessages<out K, out T> {
      */
     class RequestItem<K, T>(
         val key: K,
-        val response: CompletableDeferred<T>? = null
+        val response: CompletableDeferred<T>? = null,
     ) : CacheMessages<K, T>()
 
     /**
@@ -106,7 +106,7 @@ private fun <K, T> CoroutineScope.handleRequest(
     isValid: (CacheEntry<T>) -> Boolean,
     compute: suspend (K) -> T,
     cache: MutableMap<K, CacheEntry<T>>,
-    message: CacheMessages.RequestItem<K, T>
+    message: CacheMessages.RequestItem<K, T>,
 ) {
     val entry = cache.update(message.key) { _, currentEntry ->
         if (currentEntry == null || !isValid(currentEntry)) {

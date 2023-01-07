@@ -9,7 +9,7 @@ import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.resources.Resources
+import io.ktor.server.resources.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory

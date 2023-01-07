@@ -3,12 +3,12 @@ package com.github.couchtracker.server.infoProviders.tmdb
 import com.github.couchtracker.server.infoProviders.ids.TmdbShowId
 import com.github.couchtracker.server.model.*
 import com.github.couchtracker.server.model.shows.*
-import com.uwetrottmann.tmdb2.entities.Image as TmdbImage
 import com.uwetrottmann.tmdb2.entities.Images
 import com.uwetrottmann.tmdb2.entities.TvShow
 import com.uwetrottmann.tmdb2.entities.Videos
 import com.uwetrottmann.tmdb2.enumerations.VideoType.*
 import java.util.*
+import com.uwetrottmann.tmdb2.entities.Image as TmdbImage
 import com.uwetrottmann.tmdb2.entities.Translations as TmdbTranslations
 import com.uwetrottmann.tmdb2.enumerations.VideoType as TmdbVideoType
 
