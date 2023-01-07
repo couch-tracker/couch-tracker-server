@@ -1,6 +1,7 @@
 package com.github.couchtracker.server.model.shows
 
 import com.github.couchtracker.server.model.*
+import com.github.couchtracker.server.model.externalIds.ExternalId
 import kotlinx.serialization.Serializable
 
 @Serializable

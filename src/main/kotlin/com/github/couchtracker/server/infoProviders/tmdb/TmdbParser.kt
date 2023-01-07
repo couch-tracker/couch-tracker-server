@@ -1,5 +1,6 @@
 package com.github.couchtracker.server.infoProviders.tmdb
 
+import com.github.couchtracker.server.infoProviders.ids.TmdbShowId
 import com.github.couchtracker.server.model.*
 import com.github.couchtracker.server.model.shows.*
 import com.uwetrottmann.tmdb2.entities.Image as TmdbImage

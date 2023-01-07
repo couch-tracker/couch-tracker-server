@@ -10,7 +10,9 @@ import com.github.couchtracker.server.model.Video
 import com.github.couchtracker.server.db.model.ShowDbo
 import com.github.couchtracker.server.db.model.shows
 import com.github.couchtracker.server.infoProviders.ShowApis
+import com.github.couchtracker.server.infoProviders.ids.TmdbShowId
 import com.github.couchtracker.server.model.Image
+import com.github.couchtracker.server.model.externalIds.ExternalId
 import com.github.couchtracker.server.model.shows.ShowImages
 import com.uwetrottmann.tmdb2.Tmdb as TmdbClient
 import com.uwetrottmann.tmdb2.entities.AppendToResponse

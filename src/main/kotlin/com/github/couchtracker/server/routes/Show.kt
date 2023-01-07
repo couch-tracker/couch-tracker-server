@@ -1,7 +1,7 @@
 package com.github.couchtracker.server.routes
 
 import com.github.couchtracker.server.ApplicationData
-import com.github.couchtracker.server.model.ExternalId
+import com.github.couchtracker.server.model.externalIds.ExternalId
 import com.github.couchtracker.server.common.tvApis
 import io.ktor.http.*
 import io.ktor.resources.*
@@ -33,23 +33,23 @@ private class Routes {
 // TODO if passing "tmdb:asd" as ID, crashes with 500
 fun Route.showRoutes(ad: ApplicationData) {
     get<Routes.Show> { url ->
-        val showsApi = tvApis(ad, url.eid.provider)
+        val showsApi = tvApis(ad, url.eid)
 
-        val show = showsApi.show(url.eid.id).info.loadOrDownload(ad.connection)
+        val show = showsApi.show(url.eid).info.loadOrDownload(ad.connection)
         call.respond(show)
     }
 
     get<Routes.Show.Images> { url ->
-        val showsApi = tvApis(ad, url.parent.eid.provider)
+        val showsApi = tvApis(ad, url.parent.eid)
 
-        val images = showsApi.show(url.parent.eid.id).images.loadOrDownload(ad.connection)
+        val images = showsApi.show(url.parent.eid).images.loadOrDownload(ad.connection)
         call.respond(images)
     }
 
     get<Routes.Show.Videos> { url ->
-        val showsApi = tvApis(ad, url.parent.eid.provider)
+        val showsApi = tvApis(ad, url.parent.eid)
 
-        val show = showsApi.show(url.parent.eid.id).videos.loadOrDownload(ad.connection)
+        val show = showsApi.show(url.parent.eid).videos.loadOrDownload(ad.connection)
         call.respond(show)
     }
 }

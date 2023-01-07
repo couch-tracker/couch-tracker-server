@@ -1,16 +1,13 @@
 package com.github.couchtracker.server.infoProviders
 
-import com.github.couchtracker.server.model.ExternalIdProvider
+import com.github.couchtracker.server.model.externalIds.ExternalId
 
 interface InfoProvider {
 
-    val externalIdProvider: ExternalIdProvider
-
-    val tvApis: TvApis<String>?
+    val tvApis: TvApis<ExternalId>?
 }
 
-class InfoProviders(providers: Set<InfoProvider>) {
-    private val map = providers.associateBy { it.externalIdProvider }
+class InfoProviders(val providers: Set<InfoProvider>) {
 
-    operator fun get(provider: ExternalIdProvider) = map[provider]
+    inline fun <reified IP : InfoProvider> get() = providers.filterIsInstance<IP>().singleOrNull()
 }

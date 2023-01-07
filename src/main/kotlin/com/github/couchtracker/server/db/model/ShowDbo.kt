@@ -2,6 +2,7 @@ package com.github.couchtracker.server.db.model
 
 import com.github.couchtracker.server.model.*
 import com.github.couchtracker.server.db.DboCompanion
+import com.github.couchtracker.server.model.externalIds.ExternalId
 import com.github.couchtracker.server.model.shows.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
