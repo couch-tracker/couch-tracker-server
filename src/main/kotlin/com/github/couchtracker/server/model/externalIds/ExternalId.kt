@@ -1,6 +1,7 @@
 package com.github.couchtracker.server.model.externalIds
 
 import com.github.couchtracker.server.common.serializers.RegexSerializer
+import com.github.couchtracker.server.infoProviders.InfoProvider
 import com.github.couchtracker.server.infoProviders.InfoProviders
 import com.github.couchtracker.server.infoProviders.tmdb.Tmdb
 import kotlinx.serialization.*
@@ -20,9 +21,7 @@ sealed class ExternalId {
 
     abstract fun serializeData(): String
 
-    fun serialize(): String = "$type:${serializeData()}"
-
-    fun getInfoProvider(infoProviders: InfoProviders) = infoProviders.get<Tmdb>()
+    abstract fun getInfoProvider(infoProviders: InfoProviders) : InfoProvider?
 
     object Serializer : KSerializer<ExternalId> {
 
@@ -51,6 +50,7 @@ sealed class ExternalId {
 val KClass<out ExternalId>.typeName
     get() = this.simpleName!!.removeSuffix("ExternalId").lowercase()
 
+private fun ExternalId.serialize(): String = "$type:${serializeData()}"
 
 abstract class ExternalIdSubclassSerializer<T : ExternalId>(
     cls: KClass<out T>,

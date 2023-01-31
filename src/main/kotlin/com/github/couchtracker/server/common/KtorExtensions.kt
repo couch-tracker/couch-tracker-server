@@ -32,7 +32,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.tvApis(
     applicationData: ApplicationData,
     id: ExternalId,
 ): TvApis<ExternalId> {
-    val infoProvider: InfoProvider? = id.getInfoProvider(applicationData.infoProviders)
+    val infoProvider = id.getInfoProvider(applicationData.infoProviders)
     validate(infoProvider != null) {
         respond(HttpStatusCode.NotImplemented, "This server doesn't support IDs from provider ${id.type}!")
     }
