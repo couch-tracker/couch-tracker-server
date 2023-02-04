@@ -44,7 +44,9 @@ fun Application.couchTrackerModule(config: Config) {
     val applicationData = runBlocking { ApplicationData.create(this@couchTrackerModule, config) }
 
     routing {
-        showRoutes(applicationData)
+        route("/api") {
+            showRoutes(applicationData)
+        }
     }
 }
 
