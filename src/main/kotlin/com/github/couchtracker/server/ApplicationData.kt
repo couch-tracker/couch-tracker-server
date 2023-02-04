@@ -23,6 +23,7 @@ private val DBOS = setOf(
 
 class ApplicationData(
     val connection: CoroutineDatabase,
+    val config: Config,
     val infoProviders: InfoProviders,
 ) {
 
@@ -37,6 +38,7 @@ class ApplicationData(
 
             ApplicationData(
                 db,
+                config,
                 InfoProviders(setOfNotNull(
                     config.tmdb?.let { Tmdb(it, scope) }
                 )),

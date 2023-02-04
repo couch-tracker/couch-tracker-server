@@ -1,12 +1,16 @@
 package com.github.couchtracker.server.db.model
 
 import com.github.couchtracker.server.db.DboCompanion
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.litote.kmongo.Id
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.coroutine.CoroutineDatabase
 
+@Serializable
 data class UserDbo(
+    @Contextual
     @SerialName("_id")
     val id: Id<UserDbo>,
 

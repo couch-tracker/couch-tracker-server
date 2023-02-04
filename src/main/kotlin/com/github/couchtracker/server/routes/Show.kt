@@ -13,11 +13,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Resource("/shows")
-private class Routes {
+private class ShowRoutes {
 
     @Serializable
     @Resource("{eid}")
-    data class Show(val parent: Routes, val eid: ExternalId) {
+    data class Show(val parent: ShowRoutes, val eid: ExternalId) {
 
         @Serializable
         @Resource("images")
@@ -32,21 +32,21 @@ private class Routes {
 
 // TODO if passing "tmdb:asd" as ID, crashes with 500
 fun Route.showRoutes(ad: ApplicationData) {
-    get<Routes.Show> { url ->
+    get<ShowRoutes.Show> { url ->
         val showsApi = tvApis(ad, url.eid)
 
         val show = showsApi.show(url.eid).info.loadOrDownload(ad.connection)
         call.respond(show)
     }
 
-    get<Routes.Show.Images> { url ->
+    get<ShowRoutes.Show.Images> { url ->
         val showsApi = tvApis(ad, url.parent.eid)
 
         val images = showsApi.show(url.parent.eid).images.loadOrDownload(ad.connection)
         call.respond(images)
     }
 
-    get<Routes.Show.Videos> { url ->
+    get<ShowRoutes.Show.Videos> { url ->
         val showsApi = tvApis(ad, url.parent.eid)
 
         val show = showsApi.show(url.parent.eid).videos.loadOrDownload(ad.connection)

@@ -1,8 +1,11 @@
 package com.github.couchtracker.server
 
+import com.github.couchtracker.server.config.Config
+import com.github.couchtracker.server.routes.authRoutes
 import com.github.couchtracker.server.routes.showRoutes
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.callloging.*
@@ -13,7 +16,6 @@ import io.ktor.server.resources.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
 import ch.qos.logback.classic.Logger
-import com.github.couchtracker.server.config.Config
 import io.ktor.server.response.*
 import org.slf4j.LoggerFactory
 
@@ -34,22 +36,28 @@ fun main() {
 }
 
 fun Application.couchTrackerModule(config: Config) {
+    val applicationData = runBlocking { ApplicationData.create(this@couchTrackerModule, config) }
+
     install(CallLogging)
     install(ContentNegotiation) { json() }
     install(RequestValidation)
+    install(Authentication) {
+        JWT.Login.install(this, applicationData)
+    }
     install(StatusPages) {
         exception<IgnoreException> { _, _ -> }
     }
     install(Resources)
-
-    val applicationData = runBlocking { ApplicationData.create(this@couchTrackerModule, config) }
 
     routing {
         route("/api") {
             get {
                 call.respond(applicationData.apiInfo)
             }
-            showRoutes(applicationData)
+            authRoutes(applicationData)
+            authenticate(JWT.Login.ACCESS) {
+                showRoutes(applicationData)
+            }
         }
     }
 }

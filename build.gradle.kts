@@ -52,6 +52,9 @@ dependencies {
     implementation("com.sksamuel.hoplite:hoplite-core:2.7.0")
     implementation("com.sksamuel.hoplite:hoplite-toml:2.7.0")
 
+    // Other
+    implementation("de.mkammerer:argon2-jvm:2.11")
+
 
     // TEST DEPENDENCIES
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")

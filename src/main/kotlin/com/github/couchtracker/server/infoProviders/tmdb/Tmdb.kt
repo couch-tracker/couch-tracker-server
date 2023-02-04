@@ -1,6 +1,6 @@
 package com.github.couchtracker.server.infoProviders.tmdb
 
-import com.github.couchtracker.server.config.Config
+import com.github.couchtracker.server.config.TmdbConfig
 import com.github.couchtracker.server.infoProviders.InfoProvider
 import com.github.couchtracker.server.infoProviders.ids.TmdbShowId
 import com.github.couchtracker.server.model.externalIds.ExternalId
@@ -8,7 +8,7 @@ import com.github.couchtracker.server.model.externalIds.TmdbExternalId
 import kotlinx.coroutines.CoroutineScope
 import com.uwetrottmann.tmdb2.Tmdb as TmdbClient
 
-class Tmdb(config: Config.Tmdb, scope: CoroutineScope) : InfoProvider {
+class Tmdb(config: TmdbConfig, scope: CoroutineScope) : InfoProvider {
 
     private val client = TmdbClient(config.apiKey.value)
 
