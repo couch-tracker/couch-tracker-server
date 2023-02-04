@@ -12,7 +12,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 
-private const val MIN_ITERATIONS = 10
+private const val MIN_ITERATIONS = 1
 private val MIN_MAX_DURATION = 200.milliseconds
 private val MAX_MAX_DURATION = Int.MAX_VALUE.toLong().milliseconds
 private val MIN_MEMORY_COST = 64L.kiB
