@@ -37,6 +37,7 @@ dependencies {
 
     // Logs
     implementation("ch.qos.logback:logback-classic:1.4.5")
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
 
     // Mongo
     implementation("org.litote.kmongo:kmongo-coroutine-serialization:4.8.0")

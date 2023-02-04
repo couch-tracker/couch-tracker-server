@@ -1,5 +1,6 @@
 package com.github.couchtracker.server
 
+import com.github.couchtracker.server.config.Config
 import com.github.couchtracker.server.db.model.ShowDbo
 import com.github.couchtracker.server.db.model.ShowOrderingDbo
 import com.github.couchtracker.server.db.model.UserDbo

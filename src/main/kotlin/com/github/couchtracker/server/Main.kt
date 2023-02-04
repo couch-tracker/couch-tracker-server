@@ -12,13 +12,18 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.resources.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
+import ch.qos.logback.classic.Logger
+import com.github.couchtracker.server.config.Config
 import org.slf4j.LoggerFactory
 
-private val logger = LoggerFactory.getLogger("Main")
 
 fun main() {
     val config = Config.load()
-    logger.info("Detected configuration: {}", config)
+    // TODO log level is set too late, so some logs are always printed no matter the logLevel
+    (LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME) as Logger).apply {
+        level = config.logLevel.level
+    }
+
     embeddedServer(
         Netty,
         port = config.port,

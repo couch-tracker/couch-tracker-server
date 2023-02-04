@@ -9,6 +9,7 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.util.pipeline.*
+import mu.KotlinLogging
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -27,6 +28,9 @@ suspend fun PipelineContext<Unit, ApplicationCall>.validate(
         throw IgnoreException()
     }
 }
+
+val PipelineContext<Unit,ApplicationCall>.log
+    get() = KotlinLogging.logger(call.application.log)
 
 suspend fun PipelineContext<Unit, ApplicationCall>.tvApis(
     applicationData: ApplicationData,

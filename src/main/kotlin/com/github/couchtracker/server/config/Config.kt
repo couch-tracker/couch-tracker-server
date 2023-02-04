@@ -1,4 +1,4 @@
-package com.github.couchtracker.server
+package com.github.couchtracker.server.config
 
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.Secret
@@ -6,6 +6,7 @@ import com.sksamuel.hoplite.addFileSource
 import com.sksamuel.hoplite.sources.EnvironmentVariablesPropertySource
 
 data class Config(
+    val logLevel: LogLevel = LogLevel.INFO,
     val tmdb: Tmdb? = null,
     val mongo: Mongo,
     val port: Int = 80,
