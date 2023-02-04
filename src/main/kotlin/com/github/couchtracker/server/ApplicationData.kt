@@ -1,5 +1,6 @@
 package com.github.couchtracker.server
 
+import com.github.couchtracker.server.common.ApiInfo
 import com.github.couchtracker.server.config.Config
 import com.github.couchtracker.server.db.model.ShowDbo
 import com.github.couchtracker.server.db.model.ShowOrderingDbo
@@ -24,6 +25,10 @@ class ApplicationData(
     val connection: CoroutineDatabase,
     val infoProviders: InfoProviders,
 ) {
+
+    // TODO have mechanism to know patch number
+    val apiInfo = ApiInfo(1, 0)
+
     companion object {
         suspend fun create(scope: CoroutineScope, config: Config): ApplicationData = coroutineScope {
             val client = KMongo.createClient(config.mongo.connectionUrl).coroutine

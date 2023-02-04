@@ -14,6 +14,7 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
 import ch.qos.logback.classic.Logger
 import com.github.couchtracker.server.config.Config
+import io.ktor.server.response.*
 import org.slf4j.LoggerFactory
 
 
@@ -45,6 +46,9 @@ fun Application.couchTrackerModule(config: Config) {
 
     routing {
         route("/api") {
+            get {
+                call.respond(applicationData.apiInfo)
+            }
             showRoutes(applicationData)
         }
     }
