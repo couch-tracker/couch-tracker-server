@@ -36,26 +36,21 @@ fun Route.authRoutes(ad: ApplicationData) {
     post<AuthRoutes.Login> {
         val (login, password) = call.receive<AuthRoutes.Login.Data>()
 
-        val tokens = constantTime(ad.config.argon2.maxDuration + 500.milliseconds) {
-            val user = UserDbo.collection(ad.connection).findOne(or(UserDbo::email eq login, UserDbo::username eq login))
+        val user = UserDbo.collection(ad.connection).findOne(or(UserDbo::email eq login, UserDbo::username eq login))
+        val passwordCorrect = ad.config.argon2.verify(user?.password, password)
 
-            if (user != null && ad.config.argon2.verify(user.password, password)) {
-                // We've verified that the user exists and has the correct password
-                // In this case we're not worried about timing attacks, so we can cancel the constant time
-                // This has the effect to speed up the login by about 500ms for people with correct login AND password
-                cancel()
-                if (ad.config.argon2.needsRehash(user.password)) {
-                    log.info { "Rehashing ${user.email}'s password..." }
-                    UserDbo.collection(ad.connection).updateOne(
-                        filter = UserDbo::id eq user.id,
-                        update = setValue(UserDbo::password, ad.config.argon2.hash(password))
-                    )
-                }
-                JWT.Login.generate(ad, user)
-            } else null
+        if (user != null && passwordCorrect) {
+            if (ad.config.argon2.needsRehash(user.password)) {
+                log.info { "Rehashing ${user.email}'s password..." }
+                UserDbo.collection(ad.connection).updateOne(
+                    filter = UserDbo::id eq user.id,
+                    update = setValue(UserDbo::password, ad.config.argon2.hash(password))
+                )
+            }
+            call.respond(JWT.Login.generate(ad, user))
+        } else {
+            call.respond(HttpStatusCode.Unauthorized.description("Invalid login and/or password"))
         }
-        if (tokens != null) call.respond(tokens)
-        else call.respond(HttpStatusCode.Unauthorized.description("Invalid login and/or password"))
     }
 }
 

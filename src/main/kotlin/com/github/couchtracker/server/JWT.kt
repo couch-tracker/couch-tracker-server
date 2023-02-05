@@ -47,12 +47,6 @@ object JWT {
 
             authConfig.jwt(ACCESS) {
                 verify(ACCESS)
-                validate { credential ->
-                    val userId = credential.payload.getClaim("user").asString()
-                    UserDbo.collection(data.connection).findOneById(userId)?.let { user ->
-                        AccessPrincipal(user, credential.payload)
-                    }
-                }
                 validateUser { user, payload -> AccessPrincipal(user, payload) }
                 challenge { _, _ ->
                     call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")

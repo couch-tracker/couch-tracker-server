@@ -4,39 +4,27 @@ import com.github.couchtracker.server.common.*
 import com.github.couchtracker.server.common.ByteUnit.KI
 import com.github.couchtracker.server.common.serializers.Password
 import de.mkammerer.argon2.Argon2Factory
-import de.mkammerer.argon2.Argon2Helper
-import mu.KotlinLogging
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.ExperimentalTime
-import kotlin.time.measureTimedValue
 
 private const val MIN_ITERATIONS = 1
-private val MIN_MAX_DURATION = 200.milliseconds
-private val MAX_MAX_DURATION = Int.MAX_VALUE.toLong().milliseconds
 private val MIN_MEMORY_COST = 64L.kiB
 private const val MIN_PARALLELISM = 1
 
-private val logger = KotlinLogging.logger { }
-
+/**
+ * Defaults chosen from [RFC 9106](https://www.rfc-editor.org/rfc/rfc9106.html#name-parameter-choice)
+ */
 data class Argon2Config(
-    val iterations: Int? = null,
-    val maxDuration: Duration = 1.seconds,
+    val iterations: Int = 3,
     val memoryCost: ByteSize = 64L.MiB,
-    val parallelism: Int = 1,
+    val parallelism: Int = 4,
 ) {
+    private val memoryCostKiB = memoryCost.convert(KI).value.toInt() // Calling toInt() is safe because the maximum memory cost is Int.MAX_VALUE kiB
+
     private val argon2 = Argon2Factory.create()
+    private val randomHash = hash(Password(""))
 
     init {
-        require(iterations == null || iterations >= MIN_ITERATIONS) {
+        require(iterations >= MIN_ITERATIONS) {
             "Argon2 iterations must be >= $MIN_ITERATIONS"
-        }
-        require(maxDuration >= MIN_MAX_DURATION) {
-            "Argon2 max duration must be >= ${MIN_MAX_DURATION.inWholeMilliseconds}ms"
-        }
-        require(maxDuration <= MAX_MAX_DURATION) {
-            "Argon2 max duration must be <= ${MAX_MAX_DURATION.inWholeMilliseconds}ms"
         }
         require(memoryCost >= MIN_MEMORY_COST) {
             "Argon2 memory cost must be >= $MIN_MEMORY_COST"
@@ -46,29 +34,16 @@ data class Argon2Config(
         }
     }
 
-    private val memoryCostKiB = memoryCost.convert(KI).value.toInt() // Calling toInt() is safe because the maximum memory cost is Int.MAX_VALUE kiB
-
-    @OptIn(ExperimentalTime::class)
-    private val actualIterations = run {
-        iterations ?: run {
-            logger.info { "Detecting argon number of iterations (maxDuration: ${maxDuration.inWholeMilliseconds} ms, memoryCost: $memoryCost, parallelism: $parallelism)..." }
-            val (iterations, time) = measureTimedValue {
-                Argon2Helper.findIterations(argon2, maxDuration.inWholeMilliseconds, memoryCostKiB, parallelism)
-            }
-            logger.info { "Detected argon number of iterations ($iterations) in ${time.inWholeSeconds} seconds" }
-            iterations
-        }
-    }
 
     fun hash(password: Password): String {
-        return argon2.hash(actualIterations, memoryCostKiB, parallelism, password.value.toCharArray())
+        return argon2.hash(iterations, memoryCostKiB, parallelism, password.value.toCharArray())
     }
 
     fun needsRehash(hash: String): Boolean {
-        return argon2.needsRehash(hash, actualIterations, memoryCostKiB, parallelism)
+        return argon2.needsRehash(hash, iterations, memoryCostKiB, parallelism)
     }
 
-    fun verify(hash: String, password: Password): Boolean {
-        return argon2.verify(hash, password.value.toCharArray())
+    fun verify(hash: String?, password: Password): Boolean {
+        return argon2.verify(hash ?: randomHash, password.value.toCharArray()) && hash != null
     }
 }
