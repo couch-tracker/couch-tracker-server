@@ -10,6 +10,8 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import kotlinx.datetime.Clock
+import kotlinx.datetime.toKotlinInstant
+import org.bson.types.ObjectId
 import java.util.*
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
@@ -36,18 +38,18 @@ object JWT {
                 )
             }
 
-            fun JWTAuthenticationProvider.Config.validateUser(createPrincipal: (UserDbo, Payload) -> Principal) {
-                validate { credential ->
-                    val userId = credential.payload.getClaim(CLAIM_USER).asString()
-                    UserDbo.collection(data.connection).findOneById(userId)?.let { user ->
-                        createPrincipal(user, credential.payload)
-                    }
-                }
+            suspend fun JWTCredential.validate(createPrincipal: (UserDbo, Payload) -> Principal?) : Principal? {
+                val userId = payload.getClaim(CLAIM_USER).asString()
+                val user = UserDbo.collection(data.connection).findOneById(ObjectId(userId)) ?: return null
+
+                val issuedAtInstant = issuedAt?.toInstant()?.toKotlinInstant() ?: return null
+                return if(user.invalidateTokensAfter != null && issuedAtInstant < user.invalidateTokensAfter) null
+                else createPrincipal(user, payload)
             }
 
             authConfig.jwt(ACCESS) {
                 verify(ACCESS)
-                validateUser { user, payload -> AccessPrincipal(user, payload) }
+                validate { it.validate(::AccessPrincipal) }
                 challenge { _, _ ->
                     call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
                 }
@@ -55,7 +57,7 @@ object JWT {
 
             authConfig.jwt(REFRESH) {
                 verify(REFRESH)
-                validateUser { user, payload -> RefreshPrincipal(user, payload) }
+                validate { it.validate(::RefreshPrincipal) }
                 challenge { _, _ ->
                     call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
                 }
@@ -63,17 +65,18 @@ object JWT {
         }
 
         // TODO: add mechanism to invalidate refresh_token when a new access token is granted
-        // TODO: add mechanism to invalidate access_token and refresh_token when the password is changed
         fun generate(ad: ApplicationData, user: UserDbo): LoginTokens {
             return LoginTokens(
                 token = JWT.create()
                     .withAudience(ACCESS)
                     .withClaim(CLAIM_USER, user.id.toString())
+                    .withIssuedAt(Date())
                     .withExpiresAt(Date((Clock.System.now() + ACCESS_EXPIRATION).toEpochMilliseconds()))
                     .sign(Algorithm.HMAC256(ad.config.jwt.secret.value)),
                 refreshToken = JWT.create()
                     .withAudience(REFRESH)
                     .withClaim(CLAIM_USER, user.id.toString())
+                    .withIssuedAt(Date())
                     .withExpiresAt(Date((Clock.System.now() + REFRESH_EXPIRATION).toEpochMilliseconds()))
                     .sign(Algorithm.HMAC256(ad.config.jwt.secret.value)),
             )
