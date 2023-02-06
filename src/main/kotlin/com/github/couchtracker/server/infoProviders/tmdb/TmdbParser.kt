@@ -14,30 +14,34 @@ import com.uwetrottmann.tmdb2.enumerations.VideoType as TmdbVideoType
 
 object TmdbParser {
 
-    fun status(status: String) = when (status) {
+    fun status(status: String?) = when (status) {
         "Ended" -> ShowStatus.ENDED
         "Returning Series" -> ShowStatus.CONTINUING
         else -> TODO()
     }
 
-    fun videoProvider(site: String) = when (site) {
+    fun videoProvider(site: String?) = when (site) {
         "Vimeo" -> VideoProvider.VIMEO
         "YouTube" -> VideoProvider.YOUTUBE
         else -> null
     }
 }
 
-fun TmdbTranslations.toDbTranslations(map: (TmdbTranslations.Translation.Data) -> String): Translations {
-    return this.translations
-        .filter { it.iso_639_1 in SUPPORTED_LANGUAGES }
+fun TmdbTranslations?.toDbTranslations(map: (TmdbTranslations.Translation.Data) -> String?): Translations {
+    return this?.translations.orEmpty()
         .mapNotNull {
-            val translation = map(it.data)
-            if (translation.isBlank()) {
-                null
-            } else Translation(
-                language = it.iso_639_1,
-                value = map(it.data)
+            val data = it.data ?: return@mapNotNull null
+            val locale = Locale(
+                it.iso_639_1 ?: return@mapNotNull null,
+                it.iso_3166_1,
             )
+            val translation = map(data)?.trim()
+            if (!translation.isNullOrEmpty()) {
+                Translation(
+                    locale = locale,
+                    value = translation
+                )
+            } else null
         }
 }
 
@@ -50,58 +54,59 @@ fun TmdbVideoType.toVideoType() = when (this) {
 }
 
 fun Images.toShowImages() = ShowImages<Image>(
-    posters = this.posters.toImages(),
-    backdrops = this.backdrops.toImages(),
+    posters = this.posters.orEmpty().toImages(),
+    backdrops = this.backdrops.orEmpty().toImages(),
     // TODO logos not exposed by library
     logos = emptyList(),
 )
 
 fun List<TmdbImage>.toImages(): List<Image> {
-    return this.map { it.toImage() }
+    return this.mapNotNull { it.toImage() }
 }
 
-fun TmdbImage.toImage(): Image {
+fun TmdbImage.toImage(): Image? {
     return Image(
-        width = width,
-        height = height,
+        width = width ?: return null,
+        height = height ?: return null,
         language = if (iso_639_1 == null) null else Locale(iso_639_1),
         url = "https://image.tmdb.org/t/p/original$file_path",
         ratings = ImageRatings(
-            tmdb = Rating.Tmdb(vote_average, vote_count.toLong())
+            tmdb = Rating.Tmdb(vote_average, vote_count?.toLong())
         )
     )
 }
 
 
 fun Videos.toVideos(): List<Video> {
-    return this.results.mapIndexedNotNull { index, video -> video.toVideo(index) }
+    return this.results.orEmpty().mapIndexedNotNull { index, video -> video.toVideo(index) }
 }
 
 private fun Videos.Video.toVideo(index: Int): Video? {
     val provider = TmdbParser.videoProvider(site) ?: return null
     return Video(
         provider = provider,
-        key = key,
-        type = type.toVideoType(),
+        key = key ?: return null,
+        type = (type ?: return null).toVideoType(),
         duration = null,
         language = iso_639_1, //TODO: fare meglio?
-        date = null, // TODO: technically, the API has this info, is the library that lacks it
+        date = null, // TODO: technically, the API has this info, it's the library that lacks it
         sortingWeight = index.toFloat(),
     )
 }
 
 fun TvShow.toShow(): Show {
+    val id = id!!.toLong()
     return Show(
         id = TmdbShowId(id).toExternalId(),
         name = translations.toDbTranslations { it.name },
         externalIds = ShowExternalIds(
-            tmdb = id.toLong(),
-            tvdb = external_ids.tvdb_id?.toLong(),
-            imdb = external_ids.imdb_id,
+            tmdb = id,
+            tvdb = external_ids?.tvdb_id?.toLong(),
+            imdb = external_ids?.imdb_id,
         ),
         status = status?.let { TmdbParser.status(it) },
         ratings = ShowRatings(
-            tmdb = Rating.Tmdb(vote_average, vote_count.toLong())
+            tmdb = Rating.Tmdb(vote_average, vote_count?.toLong())
         ),
     )
 }

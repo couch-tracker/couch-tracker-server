@@ -33,7 +33,7 @@ class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbSho
     ) { id ->
         client.tvService().tv(
             // TODO APIs seem not to respect language
-            id.value, "en,null", AppendToResponse(
+            id.value.toBigInteger().intValueExact(), "en,null", AppendToResponse(
                 AppendToResponseItem.ALTERNATIVE_TITLES,
                 AppendToResponseItem.CREDITS,
                 AppendToResponseItem.EXTERNAL_IDS,

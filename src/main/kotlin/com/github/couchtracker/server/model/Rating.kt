@@ -21,6 +21,11 @@ sealed class Rating {
                 average = if (count == 0L) 0.0 else average,
                 count = count
             )
+
+            operator fun invoke(average: Double?, count: Long?): Tmdb? {
+                return if (average == null || count == null) null
+                else invoke(average, count)
+            }
         }
     }
 
