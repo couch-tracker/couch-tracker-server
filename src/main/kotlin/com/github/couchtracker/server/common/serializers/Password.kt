@@ -4,4 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @JvmInline
-value class Password(val value: String)
+value class Password(val value: String) {
+
+    fun validate() = value.length >= 8
+}

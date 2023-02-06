@@ -22,6 +22,7 @@ data class UserDbo(
     val name: String,
 
     // Security info
+    @Contextual
     val invalidateTokensAfter: Instant? = null,
 ) {
 
