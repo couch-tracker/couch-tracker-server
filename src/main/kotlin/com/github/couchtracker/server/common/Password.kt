@@ -1,4 +1,4 @@
-package com.github.couchtracker.server.common.serializers
+package com.github.couchtracker.server.common
 
 import kotlinx.serialization.Serializable
 

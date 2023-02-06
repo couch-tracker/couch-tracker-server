@@ -3,7 +3,7 @@ package com.github.couchtracker.server.routes
 import com.github.couchtracker.server.ApplicationData
 import com.github.couchtracker.server.JWT
 import com.github.couchtracker.server.common.log
-import com.github.couchtracker.server.common.serializers.Password
+import com.github.couchtracker.server.common.Password
 import com.github.couchtracker.server.common.validate
 import com.github.couchtracker.server.db.model.UserDbo
 import io.ktor.http.*

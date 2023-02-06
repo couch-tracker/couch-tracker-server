@@ -2,7 +2,7 @@ package com.github.couchtracker.server.config
 
 import com.github.couchtracker.server.common.*
 import com.github.couchtracker.server.common.ByteUnit.KI
-import com.github.couchtracker.server.common.serializers.Password
+import com.github.couchtracker.server.common.Password
 import de.mkammerer.argon2.Argon2Factory
 
 private const val MIN_ITERATIONS = 1
