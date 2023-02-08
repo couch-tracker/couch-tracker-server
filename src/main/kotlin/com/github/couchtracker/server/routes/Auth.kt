@@ -2,6 +2,7 @@ package com.github.couchtracker.server.routes
 
 import com.github.couchtracker.server.ApplicationData
 import com.github.couchtracker.server.JWT
+import com.github.couchtracker.server.accessPrincipal
 import com.github.couchtracker.server.common.log
 import com.github.couchtracker.server.common.Password
 import com.github.couchtracker.server.common.validate
@@ -35,6 +36,10 @@ private class AuthRoutes {
         @Serializable
         data class Body(val oldPassword: Password, val newPassword: Password, val invalidateOldLogins : Boolean)
     }
+
+    @Serializable
+    @Resource("refresh")
+    data class Refresh(val parent: AuthRoutes)
 }
 
 fun Route.authRoutes(ad: ApplicationData) {
@@ -65,7 +70,7 @@ fun Route.authRoutes(ad: ApplicationData) {
                 respond(HttpStatusCode.BadRequest.description("New password isn't strong enough"))
             }
 
-            val user = call.principal<JWT.Login.AccessPrincipal>()!!.user
+            val user = call.accessPrincipal.user
 
             if(!ad.config.argon2.verify(user.password, oldPassword)) {
                 call.respond(HttpStatusCode.Unauthorized.description("Old password is incorrect"))
@@ -81,6 +86,15 @@ fun Route.authRoutes(ad: ApplicationData) {
                 updateOnlyNotNullProperties = true,
             )
 
+            call.respond(JWT.Login.generate(ad, user))
+        }
+    }
+
+    authenticate(JWT.Login.REFRESH) {
+        post<AuthRoutes.Refresh> {
+            // TODO: add mechanism to invalidate old refresh token
+
+            val user = call.principal<JWT.Login.RefreshPrincipal>()!!.user
             call.respond(JWT.Login.generate(ad, user))
         }
     }

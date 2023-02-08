@@ -1,14 +1,16 @@
 package com.github.couchtracker.server
 
-import com.auth0.jwt.JWT
+import com.auth0.jwt.JWT as Auth0JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.Payload
 import com.github.couchtracker.server.db.model.UserDbo
 import com.github.couchtracker.server.model.LoginTokens
 import io.ktor.http.*
+import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
+import io.ktor.util.pipeline.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.toKotlinInstant
 import org.bson.types.ObjectId
@@ -32,18 +34,18 @@ object JWT {
         fun install(authConfig: AuthenticationConfig, data: ApplicationData) {
             fun JWTAuthenticationProvider.Config.verify(audience: String) {
                 verifier(
-                    JWT.require(Algorithm.HMAC256(data.config.jwt.secret.value))
+                    Auth0JWT.require(Algorithm.HMAC256(data.config.jwt.secret.value))
                         .withAudience(audience)
                         .build()
                 )
             }
 
-            suspend fun JWTCredential.validate(createPrincipal: (UserDbo, Payload) -> Principal?) : Principal? {
+            suspend fun JWTCredential.validate(createPrincipal: (UserDbo, Payload) -> Principal?): Principal? {
                 val userId = payload.getClaim(CLAIM_USER).asString()
                 val user = UserDbo.collection(data.connection).findOneById(ObjectId(userId)) ?: return null
 
                 val issuedAtInstant = issuedAt?.toInstant()?.toKotlinInstant() ?: return null
-                return if(user.invalidateTokensAfter != null && issuedAtInstant < user.invalidateTokensAfter) null
+                return if (user.invalidateTokensAfter != null && issuedAtInstant < user.invalidateTokensAfter) null
                 else createPrincipal(user, payload)
             }
 
@@ -64,16 +66,15 @@ object JWT {
             }
         }
 
-        // TODO: add mechanism to invalidate refresh_token when a new access token is granted
         fun generate(ad: ApplicationData, user: UserDbo): LoginTokens {
             return LoginTokens(
-                token = JWT.create()
+                token = Auth0JWT.create()
                     .withAudience(ACCESS)
                     .withClaim(CLAIM_USER, user.id.toString())
                     .withIssuedAt(Date())
                     .withExpiresAt(Date((Clock.System.now() + ACCESS_EXPIRATION).toEpochMilliseconds()))
                     .sign(Algorithm.HMAC256(ad.config.jwt.secret.value)),
-                refreshToken = JWT.create()
+                refreshToken = Auth0JWT.create()
                     .withAudience(REFRESH)
                     .withClaim(CLAIM_USER, user.id.toString())
                     .withIssuedAt(Date())
@@ -83,3 +84,7 @@ object JWT {
         }
     }
 }
+
+val ApplicationCall.accessPrincipal
+    get() = principal<JWT.Login.AccessPrincipal>() ?: throw RuntimeException("Trying to get authenticated user on non-authenticated API")
+
