@@ -51,7 +51,7 @@ object JWT {
                 verify(ACCESS)
                 validate { it.validate(::AccessPrincipal) }
                 challenge { _, _ ->
-                    call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
+                    call.respond(HttpStatusCode.Unauthorized.description("Token is not valid or has expired"))
                 }
             }
 
@@ -59,7 +59,7 @@ object JWT {
                 verify(REFRESH)
                 validate { it.validate(::RefreshPrincipal) }
                 challenge { _, _ ->
-                    call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
+                    call.respond(HttpStatusCode.Unauthorized.description("Token is not valid or has expired"))
                 }
             }
         }

@@ -38,7 +38,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.tvApis(
 ): TvApis<ExternalId> {
     val infoProvider = id.getInfoProvider(applicationData.infoProviders)
     validate(infoProvider != null) {
-        respond(HttpStatusCode.NotImplemented, "This server doesn't support IDs from provider ${id.type}!")
+        respond(HttpStatusCode.NotImplemented.description("This server doesn't support IDs from provider ${id.type}!"))
     }
     return apis(id, "shows", infoProvider.tvApis)
 }
@@ -49,7 +49,7 @@ private suspend fun <T : Any> PipelineContext<Unit, ApplicationCall>.apis(
     apis: T?,
 ): T {
     validate(apis != null) {
-        respond(HttpStatusCode.BadRequest, "${id.type} doesn't support $typeName.")
+        respond(HttpStatusCode.BadRequest.description("${id.type} doesn't support $typeName."))
     }
     return apis
 }
