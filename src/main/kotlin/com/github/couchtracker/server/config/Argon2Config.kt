@@ -1,8 +1,10 @@
 package com.github.couchtracker.server.config
 
-import com.github.couchtracker.server.common.*
+import com.github.couchtracker.server.common.ByteSize
 import com.github.couchtracker.server.common.ByteUnit.KI
+import com.github.couchtracker.server.common.MiB
 import com.github.couchtracker.server.common.Password
+import com.github.couchtracker.server.common.kiB
 import de.mkammerer.argon2.Argon2Factory
 
 private const val MIN_ITERATIONS = 1
@@ -17,7 +19,8 @@ data class Argon2Config(
     val memoryCost: ByteSize = 64L.MiB,
     val parallelism: Int = 4,
 ) {
-    private val memoryCostKiB = memoryCost.convert(KI).value.toInt() // Calling toInt() is safe because the maximum memory cost is Int.MAX_VALUE kiB
+    private val memoryCostKiB =
+        memoryCost.convert(KI).value.toInt() // Calling toInt() is safe because the maximum memory cost is Int.MAX_VALUE kiB
 
     private val argon2 = Argon2Factory.create()
     private val randomHash = hash(Password(""))
@@ -33,7 +36,6 @@ data class Argon2Config(
             "Argon2 parallelism must be >= $MIN_PARALLELISM"
         }
     }
-
 
     fun hash(password: Password): String {
         return argon2.hash(iterations, memoryCostKiB, parallelism, password.value.toCharArray())

@@ -1,8 +1,8 @@
 package com.github.couchtracker.server.model
 
+import kotlin.time.Duration
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import kotlin.time.Duration
 
 @Serializable
 data class Video(
@@ -11,14 +11,14 @@ data class Video(
     val type: VideoType,
     val duration: Duration?,
     val language: String?,
-    //val resolution: Resolution?,
+    // val resolution: Resolution?,
     val date: Instant?,
     val sortingWeight: Float,
 )
 
 @Serializable
 enum class VideoProvider {
-    YOUTUBE, VIMEO;
+    YOUTUBE, VIMEO
 }
 
 @Serializable

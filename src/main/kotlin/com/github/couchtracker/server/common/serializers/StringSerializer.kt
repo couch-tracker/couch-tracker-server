@@ -7,6 +7,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
+@Suppress("UnnecessaryAbstractClass")
 abstract class StringSerializer<T>(
     name: String,
     private val serialize: (T) -> String = { it.toString() },

@@ -1,12 +1,12 @@
 package com.github.couchtracker.server.model.externalIds
 
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertEquals
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import kotlin.test.assertEquals
 
 class ExternalIdTests {
 

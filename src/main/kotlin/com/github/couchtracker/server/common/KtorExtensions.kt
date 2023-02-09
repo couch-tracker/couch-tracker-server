@@ -2,13 +2,14 @@ package com.github.couchtracker.server.common
 
 import com.github.couchtracker.server.ApplicationData
 import com.github.couchtracker.server.IgnoreException
-import com.github.couchtracker.server.infoProviders.InfoProvider
 import com.github.couchtracker.server.infoProviders.TvApis
 import com.github.couchtracker.server.model.externalIds.ExternalId
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.response.*
-import io.ktor.util.pipeline.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.call
+import io.ktor.server.application.log
+import io.ktor.server.response.respond
+import io.ktor.util.pipeline.PipelineContext
 import mu.KotlinLogging
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -29,7 +30,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.validate(
     }
 }
 
-val PipelineContext<Unit,ApplicationCall>.log
+val PipelineContext<Unit, ApplicationCall>.log
     get() = KotlinLogging.logger(call.application.log)
 
 suspend fun PipelineContext<Unit, ApplicationCall>.tvApis(

@@ -1,13 +1,13 @@
 package com.github.couchtracker.server.db.model
 
 import com.github.couchtracker.server.db.DboCompanion
+import org.litote.kmongo.Id
+import org.litote.kmongo.coroutine.CoroutineCollection
+import org.litote.kmongo.coroutine.CoroutineDatabase
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.litote.kmongo.Id
-import org.litote.kmongo.coroutine.CoroutineCollection
-import org.litote.kmongo.coroutine.CoroutineDatabase
 
 @Serializable
 data class UserDbo(

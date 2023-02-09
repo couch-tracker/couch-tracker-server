@@ -1,8 +1,8 @@
 package com.github.couchtracker.server.model
 
 import com.github.couchtracker.server.common.serializers.LocaleSerializer
+import java.util.Locale
 import kotlinx.serialization.Serializable
-import java.util.*
 
 @Serializable
 data class Image(

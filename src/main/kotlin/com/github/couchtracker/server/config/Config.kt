@@ -26,7 +26,7 @@ data class Config(
                     EnvironmentVariablesPropertySource(
                         useUnderscoresAsSeparator = true,
                         allowUppercaseNames = true,
-                    )
+                    ),
                 )
                 .addFileSource("/couch-tracker.toml", optional = true, allowEmpty = true)
                 .addFileSource("couch-tracker-dev-config.toml", optional = true, allowEmpty = true)

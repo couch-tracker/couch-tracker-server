@@ -3,9 +3,9 @@ package com.github.couchtracker.server.db.model
 import com.github.couchtracker.server.db.DboCompanion
 import com.github.couchtracker.server.model.Translations
 import com.github.couchtracker.server.model.externalIds.ExternalId
+import org.litote.kmongo.coroutine.CoroutineDatabase
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.litote.kmongo.coroutine.CoroutineDatabase
 
 @Serializable
 data class ShowOrderingDbo(
@@ -23,4 +23,3 @@ data class ShowOrderingDbo(
 }
 
 fun CoroutineDatabase.showOrderings() = ShowOrderingDbo.collection(this)
-

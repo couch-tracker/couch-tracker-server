@@ -8,7 +8,6 @@ import kotlin.test.assertEquals
 
 class ResolutionTests {
 
-
     @Test
     fun testInvalidResolutionSize() {
         assertThrows<IllegalArgumentException> { Resolution.Size(-10, -10) }
@@ -102,8 +101,11 @@ class ResolutionTests {
     )
     fun testResolutionSizeToClass(width: Int, height: Int, expected: String?) {
         val expectedClass =
-            if (expected == null) null
-            else Resolution.Class(ResolutionClass.values().single { it.id == expected })
+            if (expected == null) {
+                null
+            } else {
+                Resolution.Class(ResolutionClass.values().single { it.id == expected })
+            }
         assertEquals(expectedClass, Resolution.Size(width, height).toClass())
     }
 }

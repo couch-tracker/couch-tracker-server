@@ -3,13 +3,16 @@ package com.github.couchtracker.server.model.externalIds
 import com.github.couchtracker.server.common.serializers.RegexSerializer
 import com.github.couchtracker.server.infoProviders.InfoProvider
 import com.github.couchtracker.server.infoProviders.InfoProviders
-import com.github.couchtracker.server.infoProviders.tmdb.Tmdb
-import kotlinx.serialization.*
+import kotlin.reflect.KClass
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlin.reflect.KClass
+import kotlinx.serialization.serializer
 
 private val REGEX = "([a-z]+):(.+)".toRegex()
 
@@ -21,7 +24,7 @@ sealed class ExternalId {
 
     abstract fun serializeData(): String
 
-    abstract fun getInfoProvider(infoProviders: InfoProviders) : InfoProvider?
+    abstract fun getInfoProvider(infoProviders: InfoProviders): InfoProvider?
 
     object Serializer : KSerializer<ExternalId> {
 
@@ -48,15 +51,18 @@ sealed class ExternalId {
 }
 
 val KClass<out ExternalId>.typeName
-    get() = this.simpleName!!.removeSuffix("ExternalId").lowercase()
+    get() = (this.simpleName ?: error("Class cannot be anonymous"))
+        .removeSuffix("ExternalId")
+        .lowercase()
 
 private fun ExternalId.serialize(): String = "$type:${serializeData()}"
 
+@Suppress("UnnecessaryAbstractClass")
 abstract class ExternalIdSubclassSerializer<T : ExternalId>(
     cls: KClass<out T>,
     val deserialize: (data: String) -> T,
 ) : RegexSerializer<T>(
-    name = "ExternalId.${cls.simpleName!!}",
+    name = "ExternalId.${cls.typeName}",
     regex = REGEX,
     serialize = { it.serialize() },
     deserialize = {
@@ -67,6 +73,8 @@ abstract class ExternalIdSubclassSerializer<T : ExternalId>(
         }
         deserialize(it.groupValues[2])
     },
-)
-
-
+) {
+    init {
+        requireNotNull(cls.simpleName) { "Class cannot be anonymous" }
+    }
+}

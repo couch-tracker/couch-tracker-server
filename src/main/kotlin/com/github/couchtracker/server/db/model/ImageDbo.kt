@@ -3,9 +3,10 @@ package com.github.couchtracker.server.db.model
 import com.github.couchtracker.server.common.serializers.LocaleSerializer
 import com.github.couchtracker.server.model.Image
 import com.github.couchtracker.server.model.ImageRatings
-import io.ktor.http.*
+import io.ktor.http.URLParserException
+import io.ktor.http.Url
+import java.util.Locale
 import kotlinx.serialization.Serializable
-import java.util.*
 
 @Serializable
 data class ImageDbo(

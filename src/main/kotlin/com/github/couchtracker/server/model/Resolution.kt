@@ -28,8 +28,13 @@ sealed class Resolution {
         }
 
         fun toClass(): Class? {
+            return Class(toResolutionClass() ?: return null)
+        }
+
+        @Suppress("MagicNumber")
+        private fun toResolutionClass(): ResolutionClass? {
             // Mostly copied from: https://github.com/jellyfin/jellyfin/blob/2e4db18ebea51a3e0b2d9b822ccee3bad918173f/MediaBrowser.Model/Entities/MediaStream.cs#L595-L630
-            val cls = when {
+            return when {
                 width <= 256 && height <= 144 -> ResolutionClass.SD
                 width <= 426 && height <= 240 -> ResolutionClass.SD
                 width <= 640 && height <= 360 -> ResolutionClass.SD
@@ -44,15 +49,14 @@ sealed class Resolution {
                 width <= 8192 && height <= 8192 -> ResolutionClass.EIGHT_K
                 else -> null
             }
-            return Class(cls ?: return null)
         }
 
-        override fun toString() = "${width}x${height}"
+        override fun toString() = "${width}x$height"
 
         object Serializer : RegexSerializer<Size>(
             name = "Resolution.Size",
             regex = "(\\d+)x(\\d+)".toRegex(),
-            deserialize = { Size(it.groupValues[1].toInt(), it.groupValues[2].toInt()) }
+            deserialize = { Size(it.groupValues[1].toInt(), it.groupValues[2].toInt()) },
         )
     }
 }
@@ -76,7 +80,9 @@ enum class ResolutionClass {
     FOUR_K,
 
     @SerialName("8k")
-    EIGHT_K;
+    EIGHT_K,
+
+    ;
 
     @OptIn(ExperimentalSerializationApi::class)
     val id get() = serializer().descriptor.getElementName(ordinal)

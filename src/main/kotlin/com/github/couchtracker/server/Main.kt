@@ -1,37 +1,39 @@
 package com.github.couchtracker.server
 
+import ch.qos.logback.classic.Logger
 import com.github.couchtracker.server.config.Config
 import com.github.couchtracker.server.routes.authRoutes
 import com.github.couchtracker.server.routes.showRoutes
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.plugins.callloging.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.requestvalidation.*
-import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.resources.*
-import io.ktor.server.routing.*
-import kotlinx.coroutines.runBlocking
-import ch.qos.logback.classic.Logger
-import io.ktor.server.response.*
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.authenticate
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.requestvalidation.RequestValidation
+import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.resources.Resources
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
+import io.ktor.server.routing.route
+import io.ktor.server.routing.routing
 import org.slf4j.LoggerFactory
-
+import kotlinx.coroutines.runBlocking
 
 fun main() {
     val config = Config.load()
     // TODO log level is set too late, so some logs are always printed no matter the logLevel
-    (LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME) as Logger).apply {
-        level = config.logLevel.level
-    }
+    (LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME) as Logger).level = config.logLevel.level
 
     embeddedServer(
         Netty,
         port = config.port,
         host = config.host,
-        module = { couchTrackerModule(config) }
+        module = { couchTrackerModule(config) },
     ).start(wait = true)
 }
 

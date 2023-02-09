@@ -1,8 +1,8 @@
 package com.github.couchtracker.server.model
 
 import com.github.couchtracker.server.common.serializers.LocaleSerializer
-import kotlinx.serialization.Serializable
 import java.util.Locale
+import kotlinx.serialization.Serializable
 
 typealias Translations = List<Translation>
 

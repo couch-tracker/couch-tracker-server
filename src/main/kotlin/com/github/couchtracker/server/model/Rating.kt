@@ -2,7 +2,6 @@ package com.github.couchtracker.server.model
 
 import kotlinx.serialization.Serializable
 
-
 sealed class Rating {
     @Serializable
     // Private constructor leak issue: https://youtrack.jetbrains.com/issue/KT-11914
@@ -19,12 +18,15 @@ sealed class Rating {
         companion object {
             operator fun invoke(average: Double, count: Long) = Tmdb(
                 average = if (count == 0L) 0.0 else average,
-                count = count
+                count = count,
             )
 
             operator fun invoke(average: Double?, count: Long?): Tmdb? {
-                return if (average == null || count == null) null
-                else invoke(average, count)
+                return if (average == null || count == null) {
+                    null
+                } else {
+                    invoke(average, count)
+                }
             }
         }
     }

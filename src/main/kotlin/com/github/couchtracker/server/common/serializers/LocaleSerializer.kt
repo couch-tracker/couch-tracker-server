@@ -1,6 +1,6 @@
 package com.github.couchtracker.server.common.serializers
 
-import java.util.*
+import java.util.Locale
 
 object LocaleSerializer : RegexSerializer<Locale>(
     name = "Locale",
@@ -8,7 +8,7 @@ object LocaleSerializer : RegexSerializer<Locale>(
     deserialize = { matcher ->
         Locale(
             matcher.groupValues[1],
-            matcher.groupValues[2].takeIf { it.isNotBlank() }
+            matcher.groupValues[2].takeIf { it.isNotBlank() },
         )
-    }
+    },
 )

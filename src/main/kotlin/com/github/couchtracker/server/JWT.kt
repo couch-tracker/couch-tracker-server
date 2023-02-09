@@ -1,23 +1,26 @@
 package com.github.couchtracker.server
 
-import com.auth0.jwt.JWT as Auth0JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.Payload
 import com.github.couchtracker.server.db.model.UserDbo
 import com.github.couchtracker.server.model.LoginTokens
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
-import io.ktor.server.response.*
-import io.ktor.util.pipeline.*
-import kotlinx.datetime.Clock
-import kotlinx.datetime.toKotlinInstant
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.auth.AuthenticationConfig
+import io.ktor.server.auth.Principal
+import io.ktor.server.auth.jwt.JWTAuthenticationProvider
+import io.ktor.server.auth.jwt.JWTCredential
+import io.ktor.server.auth.jwt.JWTPayloadHolder
+import io.ktor.server.auth.jwt.jwt
+import io.ktor.server.auth.principal
+import io.ktor.server.response.respond
 import org.bson.types.ObjectId
-import java.util.*
+import java.util.Date
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
-
+import kotlinx.datetime.Clock
+import kotlinx.datetime.toKotlinInstant
+import com.auth0.jwt.JWT as Auth0JWT
 
 object JWT {
 
@@ -36,7 +39,7 @@ object JWT {
                 verifier(
                     Auth0JWT.require(Algorithm.HMAC256(data.config.jwt.secret.value))
                         .withAudience(audience)
-                        .build()
+                        .build(),
                 )
             }
 
@@ -45,8 +48,11 @@ object JWT {
                 val user = UserDbo.collection(data.connection).findOneById(ObjectId(userId)) ?: return null
 
                 val issuedAtInstant = issuedAt?.toInstant()?.toKotlinInstant() ?: return null
-                return if (user.invalidateTokensAfter != null && issuedAtInstant < user.invalidateTokensAfter) null
-                else createPrincipal(user, payload)
+                return if (user.invalidateTokensAfter != null && issuedAtInstant < user.invalidateTokensAfter) {
+                    null
+                } else {
+                    createPrincipal(user, payload)
+                }
             }
 
             authConfig.jwt(ACCESS) {
@@ -86,5 +92,4 @@ object JWT {
 }
 
 val ApplicationCall.accessPrincipal
-    get() = principal<JWT.Login.AccessPrincipal>() ?: throw RuntimeException("Trying to get authenticated user on non-authenticated API")
-
+    get() = principal<JWT.Login.AccessPrincipal>() ?: error("Trying to get authenticated user on non-authenticated API")

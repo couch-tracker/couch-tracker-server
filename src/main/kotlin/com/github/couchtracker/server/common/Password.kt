@@ -6,5 +6,9 @@ import kotlinx.serialization.Serializable
 @JvmInline
 value class Password(val value: String) {
 
-    fun validate() = value.length >= 8
+    fun validate() = value.length >= MAX_LENGTH
+
+    companion object {
+        private const val MAX_LENGTH = 8
+    }
 }

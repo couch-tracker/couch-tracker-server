@@ -1,8 +1,10 @@
+import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.7.20"
     kotlin("plugin.serialization") version "1.7.20"
+    id("io.gitlab.arturbosch.detekt").version("1.22.0")
     id("io.ktor.plugin") version "2.1.3"
     application
 }
@@ -18,7 +20,7 @@ kotlin {
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.22.0")
 
     // Utilities
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
@@ -58,6 +60,7 @@ dependencies {
 
     // TEST DEPENDENCIES
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
+    testImplementation(kotlin("test"))
 }
 
 tasks.test {
@@ -77,4 +80,25 @@ ktor {
         archiveFileName.set("couch-tracker-server.jar")
     }
 }
+
+tasks.withType<Detekt>().configureEach {
+    reports {
+        html.required.set(true)
+        md.required.set(true)
+    }
+}
+
+tasks.buildFatJar {
+    dependsOn += "detektMain"
+}
+
+detekt {
+    toolVersion = "1.22.0"
+    config = files("detekt.yml")
+    buildUponDefaultConfig = true
+}
+
+tasks.register<Detekt>("myDetekt") {
+}
+
 

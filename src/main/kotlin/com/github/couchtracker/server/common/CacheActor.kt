@@ -1,13 +1,23 @@
 package com.github.couchtracker.server.common
 
-import kotlinx.coroutines.*
+import kotlin.time.Duration
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlin.time.Duration
+import kotlinx.datetime.TimeZone as X
 
 sealed class CacheMessages<out K, out T> {
+
+    val a: X? = null
 
     /**
      * Use this message to request an item
@@ -52,20 +62,26 @@ fun <K, T> CoroutineScope.cacheActor(
     expireTimeForFailures: Duration? = null,
     compute: suspend (K) -> T,
 ): SendChannel<CacheMessages<K, T>> {
-    val channel = cacheActor({ entry ->
-        if (entry.result.isCompleted) {
-            val elapsed = Clock.System.now() - entry.computationStarted
-            if (entry.result.hasCompletedSuccessfully()) {
-                expireTimeForSuccess == null || elapsed < expireTimeForSuccess
+    val channel = cacheActor(
+        { entry ->
+            if (entry.result.isCompleted) {
+                val elapsed = Clock.System.now() - entry.computationStarted
+                if (entry.result.hasCompletedSuccessfully()) {
+                    expireTimeForSuccess == null || elapsed < expireTimeForSuccess
+                } else {
+                    expireTimeForFailures == null || elapsed < expireTimeForFailures
+                }
             } else {
-                expireTimeForFailures == null || elapsed < expireTimeForFailures
+                true
             }
-        } else true
-    }, compute)
+        },
+        compute,
+    )
 
     // Clean-upper
     val periodicCleanup = listOfNotNull(
-        expireTimeForSuccess, expireTimeForFailures
+        expireTimeForSuccess,
+        expireTimeForFailures,
     ).minOrNull()
     if (periodicCleanup != null) {
         launch {
@@ -114,7 +130,9 @@ private fun <K, T> CoroutineScope.handleRequest(
                 async { compute(message.key) },
                 Clock.System.now(),
             )
-        } else currentEntry
+        } else {
+            currentEntry
+        }
     }
     if (message.response != null) {
         launch {

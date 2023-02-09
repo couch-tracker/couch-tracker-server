@@ -12,5 +12,3 @@ data class Show(
     val status: ShowStatus?,
     val ratings: ShowRatings,
 )
-
-

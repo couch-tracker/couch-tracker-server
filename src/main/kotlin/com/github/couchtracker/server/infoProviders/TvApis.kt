@@ -5,7 +5,6 @@ import com.github.couchtracker.server.model.Video
 import com.github.couchtracker.server.model.shows.Show
 import com.github.couchtracker.server.model.shows.ShowImages
 
-
 interface TvApis<ID : Any> {
 
     fun show(id: ID): ShowApis
@@ -23,5 +22,3 @@ interface ShowApis {
     val images: ApiItem<ShowImages<Image>>
     val videos: ApiItem<List<Video>>
 }
-
-

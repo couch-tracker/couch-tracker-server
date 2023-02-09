@@ -4,6 +4,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@Suppress("TooGenericExceptionCaught")
 suspend fun <T> CompletableDeferred<T>.reply(f: suspend () -> T) {
     val value = try {
         f()

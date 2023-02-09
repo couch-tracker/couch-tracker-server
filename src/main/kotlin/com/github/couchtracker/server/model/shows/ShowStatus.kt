@@ -21,5 +21,5 @@ enum class ShowStatus {
     PILOT_CANCELED,
 
     @SerialName("planned")
-    PLANNED()
+    PLANNED(),
 }

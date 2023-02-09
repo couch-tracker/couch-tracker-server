@@ -16,13 +16,13 @@ import com.github.couchtracker.server.model.shows.ShowImages
 import com.uwetrottmann.tmdb2.entities.AppendToResponse
 import com.uwetrottmann.tmdb2.entities.TvShow
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem
-import kotlinx.coroutines.CoroutineScope
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.coroutine.projection
 import org.litote.kmongo.eq
 import retrofit2.await
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.CoroutineScope
 import com.uwetrottmann.tmdb2.Tmdb as TmdbClient
 
 class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbShowId> {
@@ -33,7 +33,9 @@ class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbSho
     ) { id ->
         client.tvService().tv(
             // TODO APIs seem not to respect language
-            id.value.toBigInteger().intValueExact(), "en,null", AppendToResponse(
+            id.value.toBigInteger().intValueExact(),
+            "en,null",
+            AppendToResponse(
                 AppendToResponseItem.ALTERNATIVE_TITLES,
                 AppendToResponseItem.CREDITS,
                 AppendToResponseItem.EXTERNAL_IDS,
@@ -42,7 +44,7 @@ class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbSho
                 AppendToResponseItem.RELEASE_DATES,
                 AppendToResponseItem.TRANSLATIONS,
                 AppendToResponseItem.VIDEOS,
-            )
+            ),
         ).makeNotNull().await()
     }
 
@@ -71,12 +73,11 @@ class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbSho
             override suspend fun download(): ShowImages<Image> {
                 return showCache.get(id).images.toShowImages()
             }
-
         }
 
         override val videos = object : ApiItem<List<Video>>() {
             override suspend fun load(db: CoroutineDatabase): List<Video>? {
-                return null //TODO
+                return null // TODO
             }
 
             override suspend fun download(): List<Video> {
@@ -84,5 +85,4 @@ class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbSho
             }
         }
     }
-
 }

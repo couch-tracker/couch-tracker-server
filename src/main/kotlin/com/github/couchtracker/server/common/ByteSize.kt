@@ -1,8 +1,8 @@
 package com.github.couchtracker.server.common
 
 import com.github.couchtracker.server.common.serializers.RegexSerializer
-import kotlinx.serialization.Serializable
 import kotlin.math.roundToLong
+import kotlinx.serialization.Serializable
 
 @Serializable(with = ByteSize.Serializer::class)
 data class ByteSize(val value: Long, val unit: ByteUnit) {
@@ -15,7 +15,7 @@ data class ByteSize(val value: Long, val unit: ByteUnit) {
 
     fun convert(unit: ByteUnit) = ByteSize(
         value = value * (this.unit.multiplier / unit.multiplier.toDouble()).roundToLong(),
-        unit = unit
+        unit = unit,
     )
 
     operator fun compareTo(another: ByteSize) = bytes.compareTo(another.bytes)
@@ -32,23 +32,26 @@ data class ByteSize(val value: Long, val unit: ByteUnit) {
                 unit = when (unit) {
                     "" -> ByteUnit.NONE
                     else -> ByteUnit.valueOf(unit.uppercase())
-                }
+                },
             )
-        }
+        },
     )
 }
+
+private const val POWER_OF_TEN_MULTIPLIER = 1000L
+private const val POWER_OF_TWO_MULTIPLIER = 1024L
 
 enum class ByteUnit(
     val symbol: String,
     val multiplier: Long,
 ) {
     NONE("B", 1),
-    K("kB", 1000),
-    KI("kiB", 1024),
-    M("MB", 1000 * K.multiplier),
-    MI("MiB", 1024 * KI.multiplier),
-    G("GB", 1000 * M.multiplier),
-    GI("GiB", 1024 * MI.multiplier);
+    K("kB", POWER_OF_TEN_MULTIPLIER),
+    KI("kiB", POWER_OF_TWO_MULTIPLIER),
+    M("MB", POWER_OF_TEN_MULTIPLIER * K.multiplier),
+    MI("MiB", POWER_OF_TWO_MULTIPLIER * KI.multiplier),
+    G("GB", POWER_OF_TEN_MULTIPLIER * M.multiplier),
+    GI("GiB", POWER_OF_TWO_MULTIPLIER * MI.multiplier),
 }
 
 val Long.bytes get() = ByteSize(this, ByteUnit.NONE)

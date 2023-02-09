@@ -2,7 +2,6 @@ package com.github.couchtracker.server.infoProviders.ids
 
 import com.github.couchtracker.server.model.externalIds.TmdbExternalId
 
-
 sealed interface TmdbId {
     val value: Long
 
