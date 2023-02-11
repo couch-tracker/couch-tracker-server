@@ -6,7 +6,7 @@ plugins {
     kotlin("jvm") version "1.7.20"
     kotlin("plugin.serialization") version "1.7.20"
     id("io.gitlab.arturbosch.detekt").version("1.22.0")
-    id("io.ktor.plugin") version "2.1.3"
+    id("io.ktor.plugin") version "2.2.3"
     id("com.github.ben-manes.versions") version "0.45.0"
     application
 }
@@ -43,7 +43,7 @@ dependencies {
 
     // Logs
     implementation("ch.qos.logback:logback-classic:1.4.5")
-    implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
     // Mongo
     implementation("org.litote.kmongo:kmongo-coroutine-serialization:4.8.0")
@@ -53,15 +53,16 @@ dependencies {
     implementation("com.uwetrottmann.tmdb2:tmdb-java:2.8.1")
 
     // Configuration parsing
-    implementation("com.sksamuel.hoplite:hoplite-core:2.7.0")
-    implementation("com.sksamuel.hoplite:hoplite-toml:2.7.0")
+    val hopliteVersion = "2.7.1"
+    implementation("com.sksamuel.hoplite:hoplite-core:$hopliteVersion")
+    implementation("com.sksamuel.hoplite:hoplite-toml:$hopliteVersion")
 
     // Other
     implementation("de.mkammerer:argon2-jvm:2.11")
 
 
     // TEST DEPENDENCIES
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
     testImplementation(kotlin("test"))
 }
 
