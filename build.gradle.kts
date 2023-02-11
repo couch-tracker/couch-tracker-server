@@ -1,3 +1,4 @@
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -6,6 +7,7 @@ plugins {
     kotlin("plugin.serialization") version "1.7.20"
     id("io.gitlab.arturbosch.detekt").version("1.22.0")
     id("io.ktor.plugin") version "2.1.3"
+    id("com.github.ben-manes.versions") version "0.45.0"
     application
 }
 
@@ -96,4 +98,16 @@ detekt {
     toolVersion = "1.22.0"
     config = files("detekt.yml")
     buildUponDefaultConfig = true
+}
+
+tasks.withType<DependencyUpdatesTask> {
+    fun isStable(version: String): Boolean {
+        val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
+        val regex = "^[0-9,.v-]+(-r)?$".toRegex()
+        return stableKeyword || regex.matches(version)
+    }
+    gradleReleaseChannel = "current"
+    rejectVersionIf {
+        isStable(candidate.version).not()
+    }
 }
