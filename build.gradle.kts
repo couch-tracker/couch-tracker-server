@@ -97,8 +97,3 @@ detekt {
     config = files("detekt.yml")
     buildUponDefaultConfig = true
 }
-
-tasks.register<Detekt>("myDetekt") {
-}
-
-
