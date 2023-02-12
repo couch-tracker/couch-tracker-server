@@ -29,6 +29,7 @@ data class Config(
                         allowUppercaseNames = true,
                     ),
                 )
+                // .addResourceSource() TODO: put default config in resources
                 .addFileSource("/config/couch-tracker.toml", optional = true, allowEmpty = true)
                 .addFileSource("/etc/couch-tracker/couch-tracker.toml", optional = true, allowEmpty = true)
                 .addFileSource("couch-tracker-dev-config.local.toml", optional = true, allowEmpty = true)
