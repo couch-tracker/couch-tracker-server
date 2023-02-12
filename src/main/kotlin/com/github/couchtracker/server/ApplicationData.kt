@@ -1,12 +1,12 @@
 package com.github.couchtracker.server
 
-import com.github.couchtracker.server.common.ApiInfo
 import com.github.couchtracker.server.config.Config
-import com.github.couchtracker.server.db.model.ShowDbo
-import com.github.couchtracker.server.db.model.ShowOrderingDbo
-import com.github.couchtracker.server.db.model.UserDbo
 import com.github.couchtracker.server.infoProviders.InfoProviders
 import com.github.couchtracker.server.infoProviders.tmdb.Tmdb
+import com.github.couchtracker.server.model.api.ApiInfo
+import com.github.couchtracker.server.model.db.ShowDbo
+import com.github.couchtracker.server.model.db.ShowOrderingDbo
+import com.github.couchtracker.server.model.db.UserDbo
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo

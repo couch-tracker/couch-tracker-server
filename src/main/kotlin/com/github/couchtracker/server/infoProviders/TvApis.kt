@@ -1,9 +1,8 @@
 package com.github.couchtracker.server.infoProviders
 
-import com.github.couchtracker.server.model.Image
-import com.github.couchtracker.server.model.Video
-import com.github.couchtracker.server.model.shows.Show
-import com.github.couchtracker.server.model.shows.ShowImages
+import com.github.couchtracker.server.model.common.ShowImages
+import com.github.couchtracker.server.model.common.Video
+import com.github.couchtracker.server.model.infoProviders.ShowInfo
 
 interface TvApis<ID : Any> {
 
@@ -18,7 +17,7 @@ interface TvApis<ID : Any> {
 }
 
 interface ShowApis {
-    val info: ApiItem<Show>
-    val images: ApiItem<ShowImages<Image>>
+    val info: ApiItem<ShowInfo>
+    val images: ApiItem<ShowImages>
     val videos: ApiItem<List<Video>>
 }

@@ -60,7 +60,6 @@ dependencies {
     // Other
     implementation("de.mkammerer:argon2-jvm:2.11")
 
-
     // TEST DEPENDENCIES
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
     testImplementation(kotlin("test"))

@@ -1,5 +1,7 @@
 package com.github.couchtracker.server.model
 
+import com.github.couchtracker.server.model.common.Resolution
+import com.github.couchtracker.server.model.common.ResolutionClass
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest

@@ -1,10 +1,10 @@
 package com.github.couchtracker.server.config
 
-import com.github.couchtracker.server.common.ByteSize
-import com.github.couchtracker.server.common.ByteUnit.KI
-import com.github.couchtracker.server.common.MiB
-import com.github.couchtracker.server.common.Password
-import com.github.couchtracker.server.common.kiB
+import com.github.couchtracker.server.util.ByteSize
+import com.github.couchtracker.server.util.ByteUnit.KI
+import com.github.couchtracker.server.util.MiB
+import com.github.couchtracker.server.util.Password
+import com.github.couchtracker.server.util.kiB
 import de.mkammerer.argon2.Argon2Factory
 
 private const val MIN_ITERATIONS = 1

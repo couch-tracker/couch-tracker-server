@@ -1,6 +1,6 @@
 package com.github.couchtracker.server.infoProviders.ids
 
-import com.github.couchtracker.server.model.externalIds.TmdbExternalId
+import com.github.couchtracker.server.model.common.externalIds.TmdbExternalId
 
 sealed interface TmdbId {
     val value: Long

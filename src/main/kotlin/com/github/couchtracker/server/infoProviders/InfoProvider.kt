@@ -1,6 +1,6 @@
 package com.github.couchtracker.server.infoProviders
 
-import com.github.couchtracker.server.model.externalIds.ExternalId
+import com.github.couchtracker.server.model.common.externalIds.ExternalId
 
 interface InfoProvider {
 

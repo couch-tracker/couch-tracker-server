@@ -1,18 +1,17 @@
 package com.github.couchtracker.server.infoProviders.tmdb
 
-import com.github.couchtracker.server.common.cacheActor
-import com.github.couchtracker.server.common.get
-import com.github.couchtracker.server.common.makeNotNull
-import com.github.couchtracker.server.db.model.ShowDbo
-import com.github.couchtracker.server.db.model.shows
 import com.github.couchtracker.server.infoProviders.ApiItem
 import com.github.couchtracker.server.infoProviders.ShowApis
 import com.github.couchtracker.server.infoProviders.TvApis
 import com.github.couchtracker.server.infoProviders.ids.TmdbShowId
-import com.github.couchtracker.server.model.Image
-import com.github.couchtracker.server.model.Video
-import com.github.couchtracker.server.model.shows.Show
-import com.github.couchtracker.server.model.shows.ShowImages
+import com.github.couchtracker.server.model.common.ShowImages
+import com.github.couchtracker.server.model.common.Video
+import com.github.couchtracker.server.model.db.ShowDbo
+import com.github.couchtracker.server.model.db.shows
+import com.github.couchtracker.server.model.infoProviders.ShowInfo
+import com.github.couchtracker.server.util.cacheActor
+import com.github.couchtracker.server.util.get
+import com.github.couchtracker.server.util.makeNotNull
 import com.uwetrottmann.tmdb2.entities.AppendToResponse
 import com.uwetrottmann.tmdb2.entities.TvShow
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem
@@ -32,9 +31,8 @@ class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbSho
         expireTimeForFailures = 1.minutes,
     ) { id ->
         client.tvService().tv(
-            // TODO APIs seem not to respect language
             id.value.toBigInteger().intValueExact(),
-            "en,null",
+            "null",
             AppendToResponse(
                 AppendToResponseItem.ALTERNATIVE_TITLES,
                 AppendToResponseItem.CREDITS,
@@ -50,27 +48,26 @@ class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbSho
 
     override fun show(id: TmdbShowId) = object : ShowApis {
 
-        override val info = object : ApiItem<Show>() {
-            override suspend fun load(db: CoroutineDatabase): Show? {
+        override val info = object : ApiItem<ShowInfo>() {
+            override suspend fun load(db: CoroutineDatabase): ShowInfo? {
                 return db.shows()
                     .findOne(ShowDbo::id eq id.toExternalId())
-                    ?.toApi()
+                    ?.toShowInfo()
             }
 
-            override suspend fun download(): Show {
-                return showCache.get(id).toShow()
+            override suspend fun download(): ShowInfo {
+                return showCache.get(id).toShowInfo()
             }
         }
 
-        override val images = object : ApiItem<ShowImages<Image>>() {
-            override suspend fun load(db: CoroutineDatabase): ShowImages<Image>? {
+        override val images = object : ApiItem<ShowImages>() {
+            override suspend fun load(db: CoroutineDatabase): ShowImages? {
                 return db.shows()
                     .projection(ShowDbo::images, ShowDbo::id eq id.toExternalId())
                     .first()
-                    ?.map { it.toApi() }
             }
 
-            override suspend fun download(): ShowImages<Image> {
+            override suspend fun download(): ShowImages {
                 return showCache.get(id).images.toShowImages()
             }
         }

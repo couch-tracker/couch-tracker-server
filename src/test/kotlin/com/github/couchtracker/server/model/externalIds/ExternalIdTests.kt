@@ -1,5 +1,7 @@
 package com.github.couchtracker.server.model.externalIds
 
+import com.github.couchtracker.server.model.common.externalIds.ExternalId
+import com.github.couchtracker.server.model.common.externalIds.TmdbExternalId
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals

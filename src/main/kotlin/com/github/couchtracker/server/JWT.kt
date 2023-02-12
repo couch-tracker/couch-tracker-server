@@ -2,8 +2,8 @@ package com.github.couchtracker.server
 
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.Payload
-import com.github.couchtracker.server.db.model.UserDbo
-import com.github.couchtracker.server.model.LoginTokens
+import com.github.couchtracker.server.model.api.LoginTokens
+import com.github.couchtracker.server.model.db.UserDbo
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.auth.AuthenticationConfig

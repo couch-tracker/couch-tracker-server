@@ -3,12 +3,12 @@ package com.github.couchtracker.server.routes
 import com.github.couchtracker.server.ApplicationData
 import com.github.couchtracker.server.JWT
 import com.github.couchtracker.server.accessPrincipal
-import com.github.couchtracker.server.common.Password
-import com.github.couchtracker.server.common.insertIgnoreDuplicate
-import com.github.couchtracker.server.common.log
-import com.github.couchtracker.server.common.validate
 import com.github.couchtracker.server.config.SignupConfig
-import com.github.couchtracker.server.db.model.UserDbo
+import com.github.couchtracker.server.model.db.UserDbo
+import com.github.couchtracker.server.util.Password
+import com.github.couchtracker.server.util.insertIgnoreDuplicate
+import com.github.couchtracker.server.util.log
+import com.github.couchtracker.server.util.validate
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.Resource
 import io.ktor.server.application.call

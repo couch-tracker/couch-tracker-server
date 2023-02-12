@@ -1,19 +1,19 @@
 package com.github.couchtracker.server.infoProviders.tmdb
 
 import com.github.couchtracker.server.infoProviders.ids.TmdbShowId
-import com.github.couchtracker.server.model.Image
-import com.github.couchtracker.server.model.ImageRatings
-import com.github.couchtracker.server.model.Rating
-import com.github.couchtracker.server.model.Translation
-import com.github.couchtracker.server.model.Translations
-import com.github.couchtracker.server.model.Video
-import com.github.couchtracker.server.model.VideoProvider
-import com.github.couchtracker.server.model.VideoType
-import com.github.couchtracker.server.model.shows.Show
-import com.github.couchtracker.server.model.shows.ShowExternalIds
-import com.github.couchtracker.server.model.shows.ShowImages
-import com.github.couchtracker.server.model.shows.ShowRatings
-import com.github.couchtracker.server.model.shows.ShowStatus
+import com.github.couchtracker.server.model.common.Image
+import com.github.couchtracker.server.model.common.ImageRatings
+import com.github.couchtracker.server.model.common.Rating
+import com.github.couchtracker.server.model.common.ShowExternalIds
+import com.github.couchtracker.server.model.common.ShowImages
+import com.github.couchtracker.server.model.common.ShowRatings
+import com.github.couchtracker.server.model.common.ShowStatus
+import com.github.couchtracker.server.model.common.Translation
+import com.github.couchtracker.server.model.common.Translations
+import com.github.couchtracker.server.model.common.Video
+import com.github.couchtracker.server.model.common.VideoProvider
+import com.github.couchtracker.server.model.common.VideoType
+import com.github.couchtracker.server.model.infoProviders.ShowInfo
 import com.uwetrottmann.tmdb2.entities.Images
 import com.uwetrottmann.tmdb2.entities.TvShow
 import com.uwetrottmann.tmdb2.entities.Videos
@@ -42,24 +42,53 @@ object TmdbParser {
     }
 }
 
-fun TmdbTranslations?.toDbTranslations(map: (TmdbTranslations.Translation.Data) -> String?): Translations {
-    return this?.translations.orEmpty()
-        .mapNotNull {
-            val data = it.data ?: return@mapNotNull null
-            val locale = Locale(
-                it.iso_639_1 ?: return@mapNotNull null,
-                it.iso_3166_1,
-            )
-            val translation = map(data)?.trim()
-            if (!translation.isNullOrEmpty()) {
-                Translation(
-                    locale = locale,
-                    value = translation,
-                )
-            } else {
-                null
+fun localeOrNull(language: String?, country: String?): Locale? {
+    if (language.isNullOrEmpty()) return null
+    return Locale(
+        language,
+        country.orEmpty(),
+    )
+}
+
+fun TmdbTranslations?.toDbTranslations(
+    original: String?,
+    originalLanguage: String?,
+    originalCountry: String?,
+    map: (TmdbTranslations.Translation.Data) -> String?,
+): Translations {
+    return toDbTranslations(original, localeOrNull(originalLanguage, originalCountry), map)
+}
+
+fun TmdbTranslations?.toDbTranslations(
+    original: String?,
+    originalLocale: Locale?,
+    map: (TmdbTranslations.Translation.Data) -> String?,
+): Translations {
+    val originalTranslation = when (original) {
+        null -> null
+        else -> Translation(
+            locale = originalLocale,
+            value = original,
+        )
+    }
+    return Translations(
+        translations = this?.translations.orEmpty()
+            .mapNotNull {
+                val data = it.data ?: return@mapNotNull null
+                val locale = localeOrNull(it.iso_639_1, it.iso_3166_1) ?: return@mapNotNull null
+                val translation = map(data)?.trim()
+                if (!translation.isNullOrEmpty()) {
+                    Translation(
+                        locale = locale,
+                        value = translation,
+                    )
+                } else {
+                    null
+                }
             }
-        }
+            .plus(listOfNotNull(originalTranslation)),
+        originalLocale = originalTranslation?.locale,
+    )
 }
 
 fun TmdbVideoType.toVideoType() = when (this) {
@@ -70,7 +99,7 @@ fun TmdbVideoType.toVideoType() = when (this) {
     OPENING_CREDITS -> VideoType.OPENING_CREDITS
 }
 
-fun Images.toShowImages() = ShowImages<Image>(
+fun Images.toShowImages() = ShowImages(
     posters = this.posters.orEmpty().toImages(),
     backdrops = this.backdrops.orEmpty().toImages(),
     // TODO logos not exposed by library
@@ -110,11 +139,11 @@ private fun Videos.Video.toVideo(index: Int): Video? {
     )
 }
 
-fun TvShow.toShow(): Show {
+fun TvShow.toShowInfo(): ShowInfo {
     val id = id!!.toLong()
-    return Show(
+    return ShowInfo(
         id = TmdbShowId(id).toExternalId(),
-        name = translations.toDbTranslations { it.name },
+        name = translations.toDbTranslations(original_name, original_language, origin_country?.singleOrNull()) { it.name },
         externalIds = ShowExternalIds(
             tmdb = id,
             tvdb = external_ids?.tvdb_id?.toLong(),
