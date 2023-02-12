@@ -1,26 +1,30 @@
 package com.github.couchtracker.server.config
 
-import com.github.couchtracker.server.util.ByteSize
-import com.github.couchtracker.server.util.ByteUnit.KI
-import com.github.couchtracker.server.util.MiB
 import com.github.couchtracker.server.util.Password
-import com.github.couchtracker.server.util.kiB
+import com.sksamuel.hoplite.decoder.InformationUnit
+import com.sksamuel.hoplite.decoder.SizeInBytes
 import de.mkammerer.argon2.Argon2Factory
 
-private const val MIN_ITERATIONS = 1
-private val MIN_MEMORY_COST = 64L.kiB
+@Suppress("MagicNumber")
+private val MIN_MEMORY_COST = SizeInBytes(64 * 1024)
 private const val MIN_PARALLELISM = 1
+private const val MIN_ITERATIONS = 1
+
+@Suppress("MagicNumber")
+private val DEFAULT_MEMORY_COST = SizeInBytes(64 * 1024 * 1024)
+private const val DEFAULT_PARALLELISM = 4
+private const val DEFAULT_ITERATIONS = 3
 
 /**
  * Defaults chosen from [RFC 9106](https://www.rfc-editor.org/rfc/rfc9106.html#name-parameter-choice)
  */
 data class Argon2Config(
-    val iterations: Int = 3,
-    val memoryCost: ByteSize = 64L.MiB,
-    val parallelism: Int = 4,
+    val iterations: Int = DEFAULT_ITERATIONS,
+    val memoryCost: SizeInBytes = DEFAULT_MEMORY_COST,
+    val parallelism: Int = DEFAULT_PARALLELISM,
 ) {
-    private val memoryCostKiB =
-        memoryCost.convert(KI).value.toInt() // Calling toInt() is safe because the maximum memory cost is Int.MAX_VALUE kiB
+    // Calling toInt() is safe because the maximum memory cost is Int.MAX_VALUE kiB
+    private val memoryCostKiB = memoryCost.convert(InformationUnit.Kibibytes).toInt()
 
     private val argon2 = Argon2Factory.create()
     private val randomHash = hash(Password(""))
@@ -29,7 +33,7 @@ data class Argon2Config(
         require(iterations >= MIN_ITERATIONS) {
             "Argon2 iterations must be >= $MIN_ITERATIONS"
         }
-        require(memoryCost >= MIN_MEMORY_COST) {
+        require(memoryCost.size >= MIN_MEMORY_COST.size) {
             "Argon2 memory cost must be >= $MIN_MEMORY_COST"
         }
         require(parallelism >= MIN_PARALLELISM) {
