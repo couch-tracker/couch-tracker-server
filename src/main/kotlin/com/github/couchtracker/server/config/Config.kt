@@ -15,6 +15,7 @@ data class Config(
     val host: String = "0.0.0.0",
     val jwt: JwtConfig,
     val argon2: Argon2Config = Argon2Config(),
+    val signup: SignupConfig = SignupConfig.Closed,
 ) {
 
     companion object {

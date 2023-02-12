@@ -17,15 +17,20 @@ import kotlin.contracts.contract
 @OptIn(ExperimentalContracts::class)
 suspend fun PipelineContext<Unit, ApplicationCall>.validate(
     condition: Boolean,
-    f: suspend ApplicationCall.() -> Unit = {
-        respond(HttpStatusCode.BadRequest)
-    },
+    code: HttpStatusCode = HttpStatusCode.BadRequest,
+    message: suspend () -> String? = { null },
 ) {
     contract {
         returns() implies condition
     }
     if (!condition) {
-        call.f()
+        val msg = message()
+        call.respond(
+            when {
+                msg != null -> code.description(msg)
+                else -> code
+            }
+        )
         throw IgnoreException()
     }
 }
@@ -38,8 +43,8 @@ suspend fun PipelineContext<Unit, ApplicationCall>.tvApis(
     id: ExternalId,
 ): TvApis<ExternalId> {
     val infoProvider = id.getInfoProvider(applicationData.infoProviders)
-    validate(infoProvider != null) {
-        respond(HttpStatusCode.NotImplemented.description("This server doesn't support IDs from provider ${id.type}!"))
+    validate(infoProvider != null, HttpStatusCode.NotImplemented) {
+        "This server doesn't support IDs from provider ${id.type}!"
     }
     return apis(id, "shows", infoProvider.tvApis)
 }
@@ -49,8 +54,8 @@ private suspend fun <T : Any> PipelineContext<Unit, ApplicationCall>.apis(
     typeName: String,
     apis: T?,
 ): T {
-    validate(apis != null) {
-        respond(HttpStatusCode.BadRequest.description("${id.type} doesn't support $typeName."))
+    validate(apis != null, HttpStatusCode.BadRequest) {
+        "${id.type} doesn't support $typeName."
     }
     return apis
 }
