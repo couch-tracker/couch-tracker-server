@@ -28,7 +28,9 @@ data class Config(
                         allowUppercaseNames = true,
                     ),
                 )
-                .addFileSource("/couch-tracker.toml", optional = true, allowEmpty = true)
+                .addFileSource("/config/couch-tracker.toml", optional = true, allowEmpty = true)
+                .addFileSource("/etc/couch-tracker/couch-tracker.toml", optional = true, allowEmpty = true)
+                .addFileSource("couch-tracker-dev-config.local.toml", optional = true, allowEmpty = true)
                 .addFileSource("couch-tracker-dev-config.toml", optional = true, allowEmpty = true)
                 .build()
                 .loadConfigOrThrow<Config>()

@@ -2,3 +2,10 @@ port = 8080
 
 [mongo]
 connection-url = "mongodb://localhost:27017"
+
+# Put into couch-tracker-dev-config.local.toml
+#[jwt]
+#secret = "<your_jwt_secret>"
+#
+#[tmdb]
+#api-key = "<your_tmdb_api_key>"
