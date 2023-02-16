@@ -42,7 +42,11 @@ private class AuthRoutes {
     @Resource("change-password")
     data class ChangePassword(val parent: AuthRoutes) {
         @Serializable
-        data class Body(val oldPassword: Password, val newPassword: Password, val invalidateOldLogins: Boolean)
+        data class Body(val oldPassword: Password, val newPassword: Password, val invalidateOldLogins: Boolean) {
+            init {
+                newPassword.validate().require()
+            }
+        }
     }
 
     @Serializable
@@ -58,7 +62,12 @@ private class AuthRoutes {
             val email: String,
             val password: Password,
             val name: String,
-        )
+        ) {
+            init {
+                password.validate().require()
+                require(name.isNotBlank()) { "Name cannot be blank" }
+            }
+        }
     }
 }
 
@@ -85,7 +94,6 @@ private fun Route.refresh(ad: ApplicationData) = post<AuthRoutes.Refresh> {
 
 private fun Route.changePassword(ad: ApplicationData) = post<AuthRoutes.ChangePassword> {
     val (oldPassword, newPassword, invalidateOldLogins) = call.receive<AuthRoutes.ChangePassword.Body>()
-    validate(newPassword.validate()) { "New password isn't strong enough" }
 
     val user = call.accessPrincipal.user
 
@@ -134,11 +142,6 @@ private fun Route.signUp(ad: ApplicationData) = post<AuthRoutes.SignUp> {
     validate(canSignUp, HttpStatusCode.Forbidden)
 
     val body = call.receive<AuthRoutes.SignUp.Body>()
-
-    validate(!body.username.contains('@')) { "Username cannot contain @ sign" }
-    validate(body.email.contains('@')) { "Email must contain @ sign" }
-    validate(body.password.validate()) { "Password isn't strong enough" }
-    validate(body.name.isNotBlank()) { "Name cannot be empty" }
 
     val hashedPassword = ad.config.argon2.hash(body.password)
     val user = UserDbo(

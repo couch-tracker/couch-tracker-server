@@ -2,6 +2,8 @@ package com.github.couchtracker.server.model.db
 
 import com.github.couchtracker.server.model.api.User
 import com.github.couchtracker.server.util.DboCompanion
+import com.github.couchtracker.server.util.Email
+import com.github.couchtracker.server.util.Username
 import org.litote.kmongo.Id
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.coroutine.CoroutineDatabase
@@ -29,8 +31,8 @@ data class UserDbo(
 
     fun toApi() = User(
         id = id.toString(),
-        username = username,
-        email = email,
+        username = Username(username),
+        email = Email(email),
         name = name,
     )
 
