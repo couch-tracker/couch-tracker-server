@@ -1,5 +1,6 @@
 package com.github.couchtracker.server.model.db
 
+import com.github.couchtracker.server.model.api.User
 import com.github.couchtracker.server.util.DboCompanion
 import org.litote.kmongo.Id
 import org.litote.kmongo.coroutine.CoroutineCollection
@@ -25,6 +26,13 @@ data class UserDbo(
     @Contextual
     val invalidateTokensAfter: Instant? = null,
 ) {
+
+    fun toApi() = User(
+        id = id.toString(),
+        username = username,
+        email = email,
+        name = name,
+    )
 
     companion object : DboCompanion<UserDbo> {
 

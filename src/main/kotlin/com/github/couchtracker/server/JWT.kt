@@ -2,7 +2,8 @@ package com.github.couchtracker.server
 
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.Payload
-import com.github.couchtracker.server.model.api.LoginTokens
+import com.github.couchtracker.server.model.api.LoginResult
+import com.github.couchtracker.server.model.api.TokenInfo
 import com.github.couchtracker.server.model.db.UserDbo
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
@@ -72,20 +73,29 @@ object JWT {
             }
         }
 
-        fun generate(ad: ApplicationData, user: UserDbo): LoginTokens {
-            return LoginTokens(
-                token = Auth0JWT.create()
-                    .withAudience(ACCESS)
-                    .withClaim(CLAIM_USER, user.id.toString())
-                    .withIssuedAt(Date())
-                    .withExpiresAt(Date((Clock.System.now() + ACCESS_EXPIRATION).toEpochMilliseconds()))
-                    .sign(Algorithm.HMAC256(ad.config.jwt.secret.value)),
-                refreshToken = Auth0JWT.create()
-                    .withAudience(REFRESH)
-                    .withClaim(CLAIM_USER, user.id.toString())
-                    .withIssuedAt(Date())
-                    .withExpiresAt(Date((Clock.System.now() + REFRESH_EXPIRATION).toEpochMilliseconds()))
-                    .sign(Algorithm.HMAC256(ad.config.jwt.secret.value)),
+        fun generate(ad: ApplicationData, user: UserDbo): LoginResult {
+            val accessExpiration = Date((Clock.System.now() + ACCESS_EXPIRATION).toEpochMilliseconds())
+            val refreshExpiration = Date((Clock.System.now() + REFRESH_EXPIRATION).toEpochMilliseconds())
+            return LoginResult(
+                user = user.toApi(),
+                accessToken = TokenInfo(
+                    token = Auth0JWT.create()
+                        .withAudience(ACCESS)
+                        .withClaim(CLAIM_USER, user.id.toString())
+                        .withIssuedAt(Date())
+                        .withExpiresAt(accessExpiration)
+                        .sign(Algorithm.HMAC256(ad.config.jwt.secret.value)),
+                    expiration = accessExpiration.toInstant().toKotlinInstant(),
+                ),
+                refreshToken = TokenInfo(
+                    token = Auth0JWT.create()
+                        .withAudience(REFRESH)
+                        .withClaim(CLAIM_USER, user.id.toString())
+                        .withIssuedAt(Date())
+                        .withExpiresAt(refreshExpiration)
+                        .sign(Algorithm.HMAC256(ad.config.jwt.secret.value)),
+                    expiration = refreshExpiration.toInstant().toKotlinInstant(),
+                ),
             )
         }
     }
