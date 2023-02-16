@@ -99,6 +99,7 @@ private fun Route.changePassword(ad: ApplicationData) = post<AuthRoutes.ChangePa
 
     if (!ad.config.argon2.verify(user.password, oldPassword)) {
         call.respond(HttpStatusCode.Unauthorized.description("Old password is incorrect"))
+        return@post
     }
 
     val hashedPassword = ad.config.argon2.hash(newPassword)
