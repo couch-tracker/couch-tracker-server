@@ -4,6 +4,7 @@ import com.github.couchtracker.server.config.Config
 import com.github.couchtracker.server.infoProviders.InfoProviders
 import com.github.couchtracker.server.infoProviders.tmdb.Tmdb
 import com.github.couchtracker.server.model.api.ApiInfo
+import com.github.couchtracker.server.model.api.toType
 import com.github.couchtracker.server.model.db.ShowDbo
 import com.github.couchtracker.server.model.db.ShowOrderingDbo
 import com.github.couchtracker.server.model.db.UserDbo
@@ -28,7 +29,7 @@ class ApplicationData(
 ) {
 
     // TODO have mechanism to know patch number
-    val apiInfo = ApiInfo(1, 0)
+    val apiInfo = ApiInfo(1, 0, config.signup.toType())
 
     companion object {
         suspend fun create(scope: CoroutineScope, config: Config): ApplicationData = coroutineScope {
