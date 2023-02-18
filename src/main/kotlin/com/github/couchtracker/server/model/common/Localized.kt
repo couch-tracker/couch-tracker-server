@@ -4,6 +4,7 @@
 
 package com.github.couchtracker.server.model.common
 
+import com.github.couchtracker.server.util.filterNotNullKeys
 import com.github.couchtracker.server.util.serializers.LocaleSerializer
 import java.util.Locale
 import kotlinx.serialization.Serializable
@@ -23,7 +24,8 @@ sealed class Localized<T : LocalizedItem> {
         val matchers = locales.toMatchers()
         return items
             .groupBy { it.score(matchers) }
-            .minByOrNull { it.key ?: Int.MAX_VALUE }
+            .filterNotNullKeys()
+            .minByOrNull { it.key }
             ?.value
             .orEmpty()
     }
