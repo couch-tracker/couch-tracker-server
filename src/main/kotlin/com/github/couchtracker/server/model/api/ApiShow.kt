@@ -1,5 +1,6 @@
 package com.github.couchtracker.server.model.api
 
+import com.github.couchtracker.server.model.common.Image
 import com.github.couchtracker.server.model.common.ShowExternalIds
 import com.github.couchtracker.server.model.common.ShowRatings
 import com.github.couchtracker.server.model.common.ShowStatus
@@ -13,4 +14,8 @@ data class ApiShow(
     val externalIds: ShowExternalIds,
     val status: ShowStatus?,
     val ratings: ShowRatings,
+    val poster: Image?,
+    val posterClean: Image?,
+    val backdrop: Image?,
+    val backdropClean: Image?,
 )

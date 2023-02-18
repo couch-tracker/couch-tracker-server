@@ -6,6 +6,7 @@ import com.github.couchtracker.server.model.common.ShowRatings
 import com.github.couchtracker.server.model.common.ShowStatus
 import com.github.couchtracker.server.model.common.Translations
 import com.github.couchtracker.server.model.common.externalIds.ExternalId
+import com.github.couchtracker.server.model.common.getBestImages
 import com.github.couchtracker.server.model.infoProviders.ShowInfo
 import com.github.couchtracker.server.util.DboCompanion
 import org.litote.kmongo.coroutine.CoroutineDatabase
@@ -31,6 +32,8 @@ data class ShowDbo(
         externalIds = this.externalIds,
         status = this.status,
         ratings = this.ratings,
+        poster = images.posters.getBestImages(),
+        backdrop = images.backdrops.getBestImages(),
         // TODO put this somewhere
         //  orderings = db.showOrderings().projection(ShowOrderingDbo::id, ShowOrderingDbo::show eq this.id).toList()
     )

@@ -32,7 +32,7 @@ class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbSho
     ) { id ->
         client.tvService().tv(
             id.value.toBigInteger().intValueExact(),
-            "null",
+            "",
             AppendToResponse(
                 AppendToResponseItem.ALTERNATIVE_TITLES,
                 AppendToResponseItem.CREDITS,
@@ -68,7 +68,8 @@ class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbSho
             }
 
             override suspend fun download(): ShowImages {
-                return showCache.get(id).images.toShowImages()
+                val show = showCache.get(id)
+                return show.images?.toShowImages(show.originalLocale()) ?: ShowImages.EMPTY
             }
         }
 

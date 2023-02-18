@@ -4,7 +4,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ShowImages(
-    val posters: List<Image>,
-    val backdrops: List<Image>,
-    val logos: List<Image>,
-)
+    val posters: Images,
+    val backdrops: Images,
+    val logos: Images,
+) {
+    companion object {
+        val EMPTY = ShowImages(
+            posters = Images(emptyList(), null),
+            backdrops = Images(emptyList(), null),
+            logos = Images(emptyList(), null),
+        )
+    }
+}
