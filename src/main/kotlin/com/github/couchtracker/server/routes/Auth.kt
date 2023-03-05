@@ -103,7 +103,7 @@ private fun Route.changePassword(ad: ApplicationData) = post<AuthRoutes.ChangePa
     }
 
     val hashedPassword = ad.config.argon2.hash(newPassword)
-    UserDbo.collection(ad.connection).updateOneById(
+    UserDbo.collection(ad.db).updateOneById(
         id = user.id,
         update = set(
             UserDbo::password setTo hashedPassword,
@@ -118,13 +118,13 @@ private fun Route.changePassword(ad: ApplicationData) = post<AuthRoutes.ChangePa
 private fun Route.login(ad: ApplicationData) = post<AuthRoutes.Login> {
     val (login, password) = call.receive<AuthRoutes.Login.Body>()
 
-    val user = UserDbo.collection(ad.connection).findOne(or(UserDbo::email eq login, UserDbo::username eq login))
+    val user = UserDbo.collection(ad.db).findOne(or(UserDbo::email eq login, UserDbo::username eq login))
     val passwordCorrect = ad.config.argon2.verify(user?.password, password)
 
     if (user != null && passwordCorrect) {
         if (ad.config.argon2.needsRehash(user.password)) {
             log.info { "Rehashing ${user.email}'s password..." }
-            UserDbo.collection(ad.connection).updateOne(
+            UserDbo.collection(ad.db).updateOne(
                 filter = UserDbo::id eq user.id,
                 update = setValue(UserDbo::password, ad.config.argon2.hash(password)),
             )
@@ -154,7 +154,7 @@ private fun Route.signUp(ad: ApplicationData) = post<AuthRoutes.SignUp> {
     )
 
     val inserted = insertIgnoreDuplicate {
-        UserDbo.collection(ad.connection).insertOne(user)
+        UserDbo.collection(ad.db).insertOne(user)
     }
     if (inserted) {
         call.respond(HttpStatusCode.Created)

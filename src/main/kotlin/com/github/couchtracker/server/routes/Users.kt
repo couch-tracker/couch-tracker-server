@@ -40,7 +40,7 @@ fun Route.users(ad: ApplicationData) {
         patch<Users.Id> { (_, id) ->
             val user = checkSelf(id)
             val patch = call.receive<UserPatch>()
-            patch.update(ad.connection, user.id)
+            patch.update(ad.db, user.id)
             call.respond(HttpStatusCode.NoContent)
         }
 
@@ -50,7 +50,7 @@ fun Route.users(ad: ApplicationData) {
             if (!ad.config.argon2.verify(user.password, password)) {
                 call.respond(HttpStatusCode.Unauthorized.description("Password is incorrect"))
             } else {
-                UserDbo.collection(ad.connection).deleteOneById(user.id)
+                UserDbo.collection(ad.db).deleteOneById(user.id)
                 call.respond(HttpStatusCode.NoContent)
             }
         }

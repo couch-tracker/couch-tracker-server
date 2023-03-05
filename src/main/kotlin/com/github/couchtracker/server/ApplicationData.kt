@@ -23,7 +23,7 @@ private val DBOS = setOf(
 )
 
 class ApplicationData(
-    val connection: CoroutineDatabase,
+    val db: CoroutineDatabase,
     val config: Config,
     val infoProviders: InfoProviders,
 ) {

@@ -46,7 +46,7 @@ object JWT {
 
             suspend fun JWTCredential.validate(createPrincipal: (UserDbo, Payload) -> Principal?): Principal? {
                 val userId = payload.getClaim(CLAIM_USER).asString()
-                val user = UserDbo.collection(data.connection).findOneById(ObjectId(userId)) ?: return null
+                val user = UserDbo.collection(data.db).findOneById(ObjectId(userId)) ?: return null
 
                 val issuedAtInstant = issuedAt?.toInstant()?.toKotlinInstant() ?: return null
                 return if (user.invalidateTokensAfter != null && issuedAtInstant < user.invalidateTokensAfter) {

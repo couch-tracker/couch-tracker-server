@@ -35,21 +35,21 @@ fun Route.showRoutes(ad: ApplicationData) {
     get<ShowRoutes.Show> { url ->
         val showsApi = tvApis(ad, url.eid)
 
-        val info = showsApi.show(url.eid).info.loadOrDownload(ad.connection)
+        val info = showsApi.show(url.eid).info.loadOrDownload(ad.db)
         call.respond(info.toApiShow(url.locales))
     }
 
     get<ShowRoutes.Show.Images> { url ->
         val showsApi = tvApis(ad, url.parent.eid)
 
-        val images = showsApi.show(url.parent.eid).images.loadOrDownload(ad.connection)
+        val images = showsApi.show(url.parent.eid).images.loadOrDownload(ad.db)
         call.respond(images)
     }
 
     get<ShowRoutes.Show.Videos> { url ->
         val showsApi = tvApis(ad, url.parent.eid)
 
-        val show = showsApi.show(url.parent.eid).videos.loadOrDownload(ad.connection)
+        val show = showsApi.show(url.parent.eid).videos.loadOrDownload(ad.db)
         call.respond(show)
     }
 }
