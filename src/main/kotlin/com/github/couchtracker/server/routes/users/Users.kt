@@ -1,12 +1,11 @@
 @file:UseSerializers(StringIdSerializer::class)
 
-package com.github.couchtracker.server.routes
+package com.github.couchtracker.server.routes.users
 
 import com.github.couchtracker.server.ApplicationData
-import com.github.couchtracker.server.JWT
 import com.github.couchtracker.server.accessPrincipal
-import com.github.couchtracker.server.model.api.UserDelete
-import com.github.couchtracker.server.model.api.UserPatch
+import com.github.couchtracker.server.model.api.users.DeleteUserBody
+import com.github.couchtracker.server.model.api.users.PatchUserBody
 import com.github.couchtracker.server.model.db.UserDbo
 import com.github.couchtracker.server.util.serializers.StringIdSerializer
 import com.github.couchtracker.server.util.validate
@@ -14,7 +13,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.resources.Resource
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
-import io.ktor.server.auth.authenticate
 import io.ktor.server.request.receive
 import io.ktor.server.resources.delete
 import io.ktor.server.resources.get
@@ -37,28 +35,26 @@ private class Users {
 }
 
 fun Route.users(ad: ApplicationData) {
-    authenticate(JWT.Login.ACCESS) {
-        get<Users.Id> { (_, id) ->
-            val user = checkSelf(id)
-            call.respond(user.toApi())
-        }
+    get<Users.Id> { (_, id) ->
+        val user = checkSelf(id)
+        call.respond(user.toApi())
+    }
 
-        patch<Users.Id> { (_, id) ->
-            val user = checkSelf(id)
-            val patch = call.receive<UserPatch>()
-            patch.update(ad.db, user.id)
+    patch<Users.Id> { (_, id) ->
+        val user = checkSelf(id)
+        val patch = call.receive<PatchUserBody>()
+        patch.update(ad.db, user.id)
+        call.respond(HttpStatusCode.NoContent)
+    }
+
+    delete<Users.Id> { (_, id) ->
+        val user = checkSelf(id)
+        val (password) = call.receive<DeleteUserBody>()
+        if (!ad.config.argon2.verify(user.password, password)) {
+            call.respond(HttpStatusCode.Unauthorized.description("Password is incorrect"))
+        } else {
+            UserDbo.collection(ad.db).deleteOneById(user.id)
             call.respond(HttpStatusCode.NoContent)
-        }
-
-        delete<Users.Id> { (_, id) ->
-            val user = checkSelf(id)
-            val (password) = call.receive<UserDelete>()
-            if (!ad.config.argon2.verify(user.password, password)) {
-                call.respond(HttpStatusCode.Unauthorized.description("Password is incorrect"))
-            } else {
-                UserDbo.collection(ad.db).deleteOneById(user.id)
-                call.respond(HttpStatusCode.NoContent)
-            }
         }
     }
 }

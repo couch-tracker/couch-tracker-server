@@ -1,5 +1,6 @@
 package com.github.couchtracker.server.model.api
 
+import com.github.couchtracker.server.model.api.users.ApiUser
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
@@ -7,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class LoginResult(
     val accessToken: TokenInfo,
     val refreshToken: TokenInfo,
-    val user: User,
+    val user: ApiUser,
 )
 
 @Serializable

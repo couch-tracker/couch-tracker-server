@@ -4,7 +4,7 @@ import ch.qos.logback.classic.Logger
 import com.github.couchtracker.server.config.Config
 import com.github.couchtracker.server.routes.authRoutes
 import com.github.couchtracker.server.routes.showRoutes
-import com.github.couchtracker.server.routes.users
+import com.github.couchtracker.server.routes.users.users
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -60,8 +60,8 @@ fun Application.couchTrackerModule(config: Config) {
             authRoutes(applicationData)
             authenticate(JWT.Login.ACCESS) {
                 showRoutes(applicationData)
+                users(applicationData)
             }
-            users(applicationData)
         }
     }
 }

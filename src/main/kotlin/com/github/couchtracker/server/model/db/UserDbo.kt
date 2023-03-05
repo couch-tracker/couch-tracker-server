@@ -1,6 +1,6 @@
 package com.github.couchtracker.server.model.db
 
-import com.github.couchtracker.server.model.api.User
+import com.github.couchtracker.server.model.api.users.ApiUser
 import com.github.couchtracker.server.util.DboCompanion
 import com.github.couchtracker.server.util.Email
 import com.github.couchtracker.server.util.Username
@@ -29,7 +29,7 @@ data class UserDbo(
     val invalidateTokensAfter: Instant? = null,
 ) {
 
-    fun toApi() = User(
+    fun toApi() = ApiUser(
         id = id.toString(),
         username = Username(username),
         email = Email(email),
