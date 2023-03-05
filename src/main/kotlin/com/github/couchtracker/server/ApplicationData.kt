@@ -8,6 +8,7 @@ import com.github.couchtracker.server.model.api.toType
 import com.github.couchtracker.server.model.db.ShowDbo
 import com.github.couchtracker.server.model.db.ShowOrderingDbo
 import com.github.couchtracker.server.model.db.UserDbo
+import org.litote.kmongo.coroutine.CoroutineClient
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
@@ -24,6 +25,7 @@ private val DBOS = setOf(
 )
 
 class ApplicationData(
+    val mongoClient: CoroutineClient,
     val db: CoroutineDatabase,
     val config: Config,
     val infoProviders: InfoProviders,
@@ -37,14 +39,15 @@ class ApplicationData(
             kmongoSerializationConfiguration = kmongoSerializationConfiguration.copy(
                 classDiscriminator = "type",
             )
-            val client = KMongo.createClient(config.mongo.connectionUrl).coroutine
-            val db = client.getDatabase(config.mongo.databaseName)
+            val mongoClient = KMongo.createClient(config.mongo.connectionUrl).coroutine
+            val db = mongoClient.getDatabase(config.mongo.databaseName)
             DBOS.map { launch { it.setup(db) } }.joinAll()
 
             ApplicationData(
-                db,
-                config,
-                InfoProviders(
+                mongoClient = mongoClient,
+                db = db,
+                config = config,
+                infoProviders = InfoProviders(
                     setOfNotNull(
                         config.tmdb?.let { Tmdb(it, scope) },
                     ),
