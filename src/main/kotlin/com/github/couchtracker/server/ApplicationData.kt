@@ -15,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import org.litote.kmongo.serialization.configuration as kmongoSerializationConfiguration
 
 private val DBOS = setOf(
     ShowDbo,
@@ -33,6 +34,9 @@ class ApplicationData(
 
     companion object {
         suspend fun create(scope: CoroutineScope, config: Config): ApplicationData = coroutineScope {
+            kmongoSerializationConfiguration = kmongoSerializationConfiguration.copy(
+                classDiscriminator = "type",
+            )
             val client = KMongo.createClient(config.mongo.connectionUrl).coroutine
             val db = client.getDatabase(config.mongo.databaseName)
             DBOS.map { launch { it.setup(db) } }.joinAll()
