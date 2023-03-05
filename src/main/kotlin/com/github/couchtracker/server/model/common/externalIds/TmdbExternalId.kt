@@ -16,6 +16,6 @@ data class TmdbExternalId(val id: Long) : ExternalId() {
 
     object Serializer : ExternalIdSubclassSerializer<TmdbExternalId>(
         cls = TmdbExternalId::class,
-        deserialize = { TmdbExternalId(it.toLongOrNull() ?: throw SerializationException("TMDB ID must be integer")) },
+        deserializeData = { TmdbExternalId(it.toLongOrNull() ?: throw SerializationException("TMDB ID must be integer")) },
     )
 }

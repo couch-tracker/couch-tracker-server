@@ -56,7 +56,7 @@ sealed class Resolution {
         object Serializer : RegexSerializer<Size>(
             name = "Resolution.Size",
             regex = "(\\d+)x(\\d+)".toRegex(),
-            deserialize = { Size(it.groupValues[1].toInt(), it.groupValues[2].toInt()) },
+            deserializeRegex = { Size(it.groupValues[1].toInt(), it.groupValues[2].toInt()) },
         )
     }
 }

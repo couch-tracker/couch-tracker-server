@@ -41,7 +41,7 @@ sealed class ExternalId {
                 .singleOrNull { it.typeName == type }
                 ?: throw SerializationException("Invalid external ID type: $type")
 
-            return (cls.serializer() as ExternalIdSubclassSerializer<*>).deserialize(value)
+            return (cls.serializer() as ExternalIdSubclassSerializer<*>).deserializeData(value)
         }
 
         override fun serialize(encoder: Encoder, value: ExternalId) {
@@ -60,18 +60,18 @@ private fun ExternalId.serialize(): String = "$type:${serializeData()}"
 @Suppress("UnnecessaryAbstractClass")
 abstract class ExternalIdSubclassSerializer<T : ExternalId>(
     cls: KClass<out T>,
-    val deserialize: (data: String) -> T,
+    val deserializeData: (data: String) -> T,
 ) : RegexSerializer<T>(
     name = "ExternalId.${cls.typeName}",
     regex = REGEX,
     serialize = { it.serialize() },
-    deserialize = {
+    deserializeRegex = {
         val type = it.groupValues[1]
         val expectedType = cls.typeName
         if (type != expectedType) {
             throw SerializationException("External ID must be of type $expectedType, $type given")
         }
-        deserialize(it.groupValues[2])
+        deserializeData(it.groupValues[2])
     },
 ) {
     init {

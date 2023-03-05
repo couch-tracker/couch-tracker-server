@@ -20,7 +20,7 @@ object LocaleSerializer : RegexSerializer<Locale>(
             }
         }
     },
-    deserialize = { matcher ->
+    deserializeRegex = { matcher ->
         Locale(
             matcher.groupValues[1],
             matcher.groupValues[2],

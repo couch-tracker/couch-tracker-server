@@ -3,13 +3,15 @@ package com.github.couchtracker.server.util.serializers
 import kotlinx.serialization.SerializationException
 
 @Suppress("UnnecessaryAbstractClass")
-abstract class RegexSerializer<T>(
+abstract class RegexSerializer<T : Any>(
     name: String,
     regex: Regex,
     serialize: (T) -> String = { it.toString() },
-    deserialize: (MatchResult) -> T,
+    val deserializeRegex: (MatchResult) -> T,
 ) : StringSerializer<T>(
     name = name,
     serialize = serialize,
-    deserialize = { deserialize(regex.matchEntire(it) ?: throw SerializationException("Invalid input '$it' for deserializing $name")) },
+    deserialize = {
+        deserializeRegex(regex.matchEntire(it) ?: throw SerializationException("Invalid input '$it' for deserializing $name"))
+    },
 )
