@@ -1,3 +1,5 @@
+@file:UseSerializers(StringIdSerializer::class)
+
 package com.github.couchtracker.server.routes
 
 import com.github.couchtracker.server.ApplicationData
@@ -6,6 +8,7 @@ import com.github.couchtracker.server.accessPrincipal
 import com.github.couchtracker.server.model.api.UserDelete
 import com.github.couchtracker.server.model.api.UserPatch
 import com.github.couchtracker.server.model.db.UserDbo
+import com.github.couchtracker.server.util.serializers.StringIdSerializer
 import com.github.couchtracker.server.util.validate
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.Resource
@@ -19,7 +22,10 @@ import io.ktor.server.resources.patch
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.util.pipeline.PipelineContext
+import org.litote.kmongo.Id
+import org.litote.kmongo.id.StringId
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 
 @Serializable
 @Resource("/users")
@@ -27,7 +33,7 @@ private class Users {
 
     @Serializable
     @Resource("{id}")
-    data class Id(val parent: Users, val id: String)
+    data class Id(val parent: Users, val id: StringId<UserDbo>)
 }
 
 fun Route.users(ad: ApplicationData) {
@@ -57,8 +63,8 @@ fun Route.users(ad: ApplicationData) {
     }
 }
 
-private suspend fun PipelineContext<Unit, ApplicationCall>.checkSelf(id: String): UserDbo {
+private suspend fun PipelineContext<Unit, ApplicationCall>.checkSelf(id: Id<UserDbo>): UserDbo {
     val user = call.accessPrincipal.user
-    validate(user.id.toString() == id, HttpStatusCode.Forbidden)
+    validate(user.id.toString() == id.toString(), HttpStatusCode.Forbidden)
     return user
 }
