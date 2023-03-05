@@ -9,3 +9,8 @@ fun <K, V> Map<out K?, V>.filterNotNullKeys(): Map<K, V> {
     @Suppress("UNCHECKED_CAST")
     return filter { it.key != null } as Map<K, V>
 }
+
+fun <K, V> Map<K, V?>.filterNotNullValues(): Map<K, V> {
+    @Suppress("UNCHECKED_CAST")
+    return filter { it.value != null } as Map<K, V>
+}
