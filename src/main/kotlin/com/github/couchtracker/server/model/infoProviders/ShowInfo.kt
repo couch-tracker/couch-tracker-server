@@ -29,6 +29,6 @@ data class ShowInfo(
         poster = poster.forLocalesOrOriginal(locales),
         posterClean = poster.forLocales(listOf(NO_LOCALE)),
         backdrop = backdrop.forLocalesOrOriginal(locales),
-        backdropClean = poster.forLocales(listOf(NO_LOCALE)),
+        backdropClean = backdrop.forLocales(listOf(NO_LOCALE)),
     )
 }
