@@ -18,7 +18,7 @@ enum class SignupType {
     CLOSED,
 
     @SerialName("open")
-    OPEN;
+    OPEN,
 }
 
 fun SignupConfig.toType() = when (this) {

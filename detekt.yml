@@ -14,6 +14,10 @@ formatting:
   ImportOrdering:
     # Must also be changed in .editorconfig
     layout: "*,java.**,javax.**,kotlin.**,kotlinx.**,^"
+  TrailingCommaOnCallSite:
+    active: true
+  TrailingCommaOnDeclarationSite:
+    active: true
 
 style:
   MaxLineLength:  # Duplicate of ktlint MaximumLineLength
