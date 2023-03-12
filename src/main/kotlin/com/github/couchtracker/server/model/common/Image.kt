@@ -22,22 +22,30 @@ import kotlinx.serialization.UseSerializers
  */
 @Serializable
 data class Image(
-    val width: Int,
-    val height: Int,
     override val locale: Locale,
-    val url: Url,
     val ratings: ImageRatings,
+    val sources: List<ImageSource>,
 ) : LocalizedItem {
 
     init {
-        require(width > 0)
-        require(height > 0)
+        require(sources.isNotEmpty())
     }
 
     companion object {
         val BEST_COMPARATOR = compareByDescending<Image> { it.ratings.score() }
             .thenByDescending { it.ratings.count() }
-            .thenByDescending { it.width * it.height }
+    }
+}
+
+@Serializable
+data class ImageSource(
+    val width: Int,
+    val height: Int,
+    val url: Url,
+) {
+    init {
+        require(width > 0)
+        require(height > 0)
     }
 }
 

@@ -24,7 +24,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineScope
 import com.uwetrottmann.tmdb2.Tmdb as TmdbClient
 
-class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbShowId> {
+class TmdbTvApis(val client: TmdbClient, val tmdb: Tmdb, scope: CoroutineScope) : TvApis<TmdbShowId> {
 
     private val showCache = scope.cacheActor<TmdbShowId, TvShow>(
         expireTimeForSuccess = 1.hours,
@@ -56,7 +56,8 @@ class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbSho
             }
 
             override suspend fun download(): ShowInfo {
-                return showCache.get(id).toShowInfo()
+                val config = tmdb.configuration()
+                return showCache.get(id).toShowInfo(config)
             }
         }
 
@@ -69,7 +70,8 @@ class TmdbTvApis(val client: TmdbClient, scope: CoroutineScope) : TvApis<TmdbSho
 
             override suspend fun download(): ShowImages {
                 val show = showCache.get(id)
-                return show.images?.toShowImages(show.originalLocale()) ?: ShowImages.EMPTY
+                val config = tmdb.configuration()
+                return show.images?.toShowImages(config.images, show.originalLocale()) ?: ShowImages.EMPTY
             }
         }
 

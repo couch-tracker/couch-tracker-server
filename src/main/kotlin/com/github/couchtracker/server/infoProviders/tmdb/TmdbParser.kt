@@ -3,9 +3,11 @@ package com.github.couchtracker.server.infoProviders.tmdb
 import com.github.couchtracker.server.infoProviders.ids.TmdbShowId
 import com.github.couchtracker.server.model.common.Image
 import com.github.couchtracker.server.model.common.ImageRatings
+import com.github.couchtracker.server.model.common.ImageSource
 import com.github.couchtracker.server.model.common.Images
 import com.github.couchtracker.server.model.common.NO_LOCALE
 import com.github.couchtracker.server.model.common.Rating
+import com.github.couchtracker.server.model.common.Resolution
 import com.github.couchtracker.server.model.common.ShowExternalIds
 import com.github.couchtracker.server.model.common.ShowImages
 import com.github.couchtracker.server.model.common.ShowRatings
@@ -24,7 +26,8 @@ import com.uwetrottmann.tmdb2.enumerations.VideoType.FEATURETTE
 import com.uwetrottmann.tmdb2.enumerations.VideoType.OPENING_CREDITS
 import com.uwetrottmann.tmdb2.enumerations.VideoType.TEASER
 import com.uwetrottmann.tmdb2.enumerations.VideoType.TRAILER
-import io.ktor.http.Url
+import io.ktor.http.URLBuilder
+import io.ktor.http.appendPathSegments
 import java.util.Locale
 import com.uwetrottmann.tmdb2.entities.Image as TmdbImage
 import com.uwetrottmann.tmdb2.entities.Images as TmdbImages
@@ -94,29 +97,42 @@ fun TmdbVideoType.toVideoType() = when (this) {
     OPENING_CREDITS -> VideoType.OPENING_CREDITS
 }
 
-fun TmdbImages.toShowImages(originalLocale: Locale?) = ShowImages(
-    posters = this.posters.orEmpty().toImages(originalLocale),
-    backdrops = this.backdrops.orEmpty().toImages(originalLocale),
+fun TmdbImages.toShowImages(imagesConfiguration: TmdbImageSizesConfiguration, originalLocale: Locale?) = ShowImages(
+    posters = this.posters.orEmpty().toImages(imagesConfiguration.posters, originalLocale),
+    backdrops = this.backdrops.orEmpty().toImages(imagesConfiguration.backdrops, originalLocale),
     // TODO logos not exposed by library
     logos = Images(emptyList(), null),
 )
 
-fun List<TmdbImage>.toImages(originalLocale: Locale?): Images {
+fun List<TmdbImage>.toImages(config: TmdbImageSizesConfigurationForType, originalLocale: Locale?): Images {
     return Images(
-        items = this.mapNotNull { it.toImage() },
+        items = this.mapNotNull { it.toImage(config) },
         originalLocale = originalLocale,
     )
 }
 
-fun TmdbImage.toImage(): Image? {
-    return Image(
+fun TmdbImage.toImage(config: TmdbImageSizesConfigurationForType): Image? {
+    val path = file_path ?: return null
+    val originalResolution = Resolution.Size(
         width = width ?: return null,
         height = height ?: return null,
+    )
+    return Image(
         locale = if (iso_639_1 == null) NO_LOCALE else Locale(iso_639_1),
-        url = Url("https://image.tmdb.org/t/p/original$file_path"),
         ratings = ImageRatings(
             tmdb = Rating.Tmdb(vote_average, vote_count?.toLong()),
         ),
+        sources = config.sizes.map {
+            val size = it.getSize(originalResolution)
+            ImageSource(
+                width = size.width,
+                height = size.height,
+                url = URLBuilder(config.baseUrl)
+                    .appendPathSegments(it.path)
+                    .appendPathSegments(path)
+                    .build(),
+            )
+        },
     )
 }
 
@@ -141,10 +157,10 @@ fun TvShow.originalLocale(): Locale? {
     return localeOrNull(original_language, origin_country?.singleOrNull())
 }
 
-fun TvShow.toShowInfo(): ShowInfo {
+fun TvShow.toShowInfo(config: TmdbConfiguration): ShowInfo {
     val id = id!!.toLong()
     val originalLocale = originalLocale()
-    val images = images?.toShowImages(originalLocale) ?: ShowImages.EMPTY
+    val images = images?.toShowImages(config.images, originalLocale) ?: ShowImages.EMPTY
     return ShowInfo(
         id = TmdbShowId(id).toExternalId(),
         name = translations.toDbTranslations(original_name, originalLocale) { it.name },
