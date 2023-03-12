@@ -1,7 +1,9 @@
 package com.github.couchtracker.server.util
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
@@ -12,17 +14,18 @@ sealed class OptionalField<out T> {
 
     data class Present<T>(val value: T) : OptionalField<T>()
 
+    @OptIn(ExperimentalSerializationApi::class)
     class Serializer<T>(private val elementSerializer: KSerializer<T>) : KSerializer<OptionalField<T>> {
 
-        override val descriptor = elementSerializer.descriptor
+        override val descriptor = SerialDescriptor("OptionalField", elementSerializer.descriptor)
 
         override fun deserialize(decoder: Decoder): OptionalField<T> {
-            return Present(elementSerializer.deserialize(decoder))
+            return Present(decoder.decodeSerializableValue(elementSerializer))
         }
 
         override fun serialize(encoder: Encoder, value: OptionalField<T>) {
             require(value is Present)
-            elementSerializer.serialize(encoder, value.value)
+            encoder.encodeSerializableValue(elementSerializer, value.value)
         }
     }
 }
