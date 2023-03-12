@@ -14,9 +14,13 @@ import io.ktor.server.auth.authenticate
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.compression.Compression
+import io.ktor.server.plugins.compression.condition
+import io.ktor.server.plugins.compression.gzip
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.requestvalidation.RequestValidation
 import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.request.uri
 import io.ktor.server.resources.Resources
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
@@ -42,6 +46,12 @@ fun Application.couchTrackerModule(config: Config) {
     val applicationData = runBlocking { ApplicationData.create(this@couchTrackerModule, config) }
 
     install(CallLogging)
+    install(Compression) {
+        gzip {
+            // Disable for sensitive APIs. See https://en.wikipedia.org/wiki/BREACH
+            condition { !request.uri.startsWith("/api/auth") }
+        }
+    }
     install(ContentNegotiation) { json() }
     install(RequestValidation)
     install(Authentication) {
