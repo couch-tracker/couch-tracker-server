@@ -27,11 +27,11 @@ import kotlinx.serialization.UseSerializers
 
 @Serializable
 @Resource("/users")
-private class Users {
+class Users {
 
     @Serializable
-    @Resource("{id}")
-    data class Id(val parent: Users, val id: WrappedObjectId<UserDbo>)
+    @Resource("{userId}")
+    data class Id(val parent: Users, val userId: WrappedObjectId<UserDbo>)
 }
 
 fun Route.users(ad: ApplicationData) {
@@ -57,9 +57,11 @@ fun Route.users(ad: ApplicationData) {
             call.respond(HttpStatusCode.NoContent)
         }
     }
+    lists(ad)
+    showCollection(ad)
 }
 
-private suspend fun PipelineContext<Unit, ApplicationCall>.checkSelf(id: Id<UserDbo>): UserDbo {
+suspend fun PipelineContext<Unit, ApplicationCall>.checkSelf(id: Id<UserDbo>): UserDbo {
     val user = call.accessPrincipal.user
     validate(user.id.toString() == id.toString(), HttpStatusCode.Forbidden)
     return user
