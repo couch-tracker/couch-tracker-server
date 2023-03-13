@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run server" type="JetRunConfigurationType">
+    <option name="MAIN_CLASS_NAME" value="com.github.couchtracker.server.MainKt" />
+    <module name="couch-tracker-server.main" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
