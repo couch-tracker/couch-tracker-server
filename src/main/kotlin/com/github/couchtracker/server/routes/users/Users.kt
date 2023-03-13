@@ -1,4 +1,4 @@
-@file:UseSerializers(StringIdSerializer::class)
+@file:UseSerializers(WrappedObjectIdSerializer::class)
 
 package com.github.couchtracker.server.routes.users
 
@@ -7,7 +7,7 @@ import com.github.couchtracker.server.accessPrincipal
 import com.github.couchtracker.server.model.api.users.DeleteUserBody
 import com.github.couchtracker.server.model.api.users.PatchUserBody
 import com.github.couchtracker.server.model.db.UserDbo
-import com.github.couchtracker.server.util.serializers.StringIdSerializer
+import com.github.couchtracker.server.util.serializers.WrappedObjectIdSerializer
 import com.github.couchtracker.server.util.validate
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.Resource
@@ -21,7 +21,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.util.pipeline.PipelineContext
 import org.litote.kmongo.Id
-import org.litote.kmongo.id.StringId
+import org.litote.kmongo.id.WrappedObjectId
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
@@ -31,7 +31,7 @@ private class Users {
 
     @Serializable
     @Resource("{id}")
-    data class Id(val parent: Users, val id: StringId<UserDbo>)
+    data class Id(val parent: Users, val id: WrappedObjectId<UserDbo>)
 }
 
 fun Route.users(ad: ApplicationData) {
