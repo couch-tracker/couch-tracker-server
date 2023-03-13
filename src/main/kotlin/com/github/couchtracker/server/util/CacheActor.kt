@@ -13,11 +13,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone as X
 
 sealed class CacheMessages<out K, out T> {
-
-    val a: X? = null
 
     /**
      * Use this message to request an item
