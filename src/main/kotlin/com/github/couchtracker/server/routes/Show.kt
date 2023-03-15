@@ -30,7 +30,6 @@ private class ShowRoutes {
     }
 }
 
-// TODO if passing "tmdb:asd" as ID, crashes with 500
 fun Route.showRoutes(ad: ApplicationData) {
     get<ShowRoutes.Show> { url ->
         val showsApi = tvApis(ad, url.eid)
