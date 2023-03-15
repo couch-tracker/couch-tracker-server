@@ -32,6 +32,7 @@ import io.ktor.server.routing.routing
 import org.slf4j.LoggerFactory
 import kotlinx.coroutines.runBlocking
 
+// TEST
 fun main() {
     val config = Config.load()
     // TODO log level is set too late, so some logs are always printed no matter the logLevel
