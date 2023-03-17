@@ -1,7 +1,5 @@
 package com.github.couchtracker.server.model.api.users.lists
 
-import com.github.couchtracker.server.model.common.list.ListDisplayOptions
-import com.github.couchtracker.server.model.common.list.ListSorterType
 import com.github.couchtracker.server.model.db.list.ListItem
 import com.github.couchtracker.server.model.db.list.contains
 import com.github.couchtracker.server.util.OptionalField
@@ -19,7 +17,7 @@ interface AbstractPatchListBody {
     val sort: OptionalField<List<PatchListItem>>
 
     // Change list options
-    val sorter: OptionalField<ListSorterType>
+    val displayOptions: ListDisplayOptionsPatch
 
     fun patchedItems(items: List<ListItem>): OptionalField<List<ListItem>> {
         if (append is Missing && remove is Missing && sort is Missing) {
@@ -64,18 +62,6 @@ interface AbstractPatchListBody {
                     sortBy { it.index() }
                 }
             },
-        )
-    }
-
-    fun displayOptions(options: ListDisplayOptions): OptionalField<ListDisplayOptions> {
-        if (sorter is Missing) {
-            // Optimize case where display options are not modified
-            return Missing
-        }
-        return Present(
-            ListDisplayOptions(
-                sorter = sorter.or(options.sorter),
-            ),
         )
     }
 }

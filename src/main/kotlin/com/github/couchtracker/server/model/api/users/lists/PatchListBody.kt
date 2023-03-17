@@ -1,6 +1,5 @@
 package com.github.couchtracker.server.model.api.users.lists
 
-import com.github.couchtracker.server.model.common.list.ListSorterType
 import com.github.couchtracker.server.util.OptionalField
 import kotlinx.serialization.Serializable
 
@@ -10,5 +9,5 @@ data class PatchListBody(
     override val append: OptionalField<List<PatchListItem>> = OptionalField.Missing,
     override val remove: OptionalField<List<PatchListItem>> = OptionalField.Missing,
     override val sort: OptionalField<List<PatchListItem>> = OptionalField.Missing,
-    override val sorter: OptionalField<ListSorterType> = OptionalField.Missing,
+    override val displayOptions: ListDisplayOptionsPatch = ListDisplayOptionsPatch(),
 ) : AbstractPatchListBody
