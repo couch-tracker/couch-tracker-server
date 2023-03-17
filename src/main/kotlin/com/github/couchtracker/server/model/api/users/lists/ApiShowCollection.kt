@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 class ApiShowCollection(
     override val displayOptions: ListDisplayOptions,
-    val shows: List<ApiListItem.Show>,
+    val shows: List<ApiListItem>,
 ) : AbstractApiList {
     override fun items() = shows
 }

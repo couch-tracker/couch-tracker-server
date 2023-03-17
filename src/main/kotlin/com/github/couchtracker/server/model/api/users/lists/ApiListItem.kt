@@ -10,11 +10,17 @@ sealed class ApiListItem {
 
     abstract val item: Any
     abstract val added: Instant
+    abstract val sortGroup: ApiListItemGroupValue?
+
+    abstract fun withSortGroup(sortGroup: ApiListItemGroupValue?): ApiListItem
 
     @Serializable
     @SerialName("show")
     data class Show(
         override val item: ApiShow,
         override val added: Instant,
-    ) : ApiListItem()
+        override val sortGroup: ApiListItemGroupValue? = null,
+    ) : ApiListItem() {
+        override fun withSortGroup(sortGroup: ApiListItemGroupValue?) = this.copy(sortGroup = sortGroup)
+    }
 }
