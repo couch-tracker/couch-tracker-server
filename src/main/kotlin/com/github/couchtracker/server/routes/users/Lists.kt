@@ -52,7 +52,7 @@ private data class Lists(val user: Users.Id) {
             val updateBson = setOptionals(
                 ListDbo::name setTo body.name,
                 ListDbo::items setTo body.patchedItems(list.items),
-                ListDbo::displayOptions setTo body.displayOptions(list.displayOptions),
+                ListDbo::displayOptions setTo body.displayOptions.patched(list.displayOptions),
             )
             if (updateBson != null) {
                 ListDbo.collection(ad.db).updateOne(

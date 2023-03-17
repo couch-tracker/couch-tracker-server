@@ -1,7 +1,6 @@
 package com.github.couchtracker.server.model.api.users.lists
 
 import com.github.couchtracker.server.model.common.externalIds.ExternalId
-import com.github.couchtracker.server.model.common.list.ListSorterType
 import com.github.couchtracker.server.util.OptionalField
 import com.github.couchtracker.server.util.map
 import kotlinx.serialization.SerialName
@@ -16,7 +15,7 @@ data class PatchShowCollectionBody(
     val removeShows: OptionalField<List<ExternalId>> = OptionalField.Missing,
     @SerialName("sort")
     val sortShows: OptionalField<List<ExternalId>> = OptionalField.Missing,
-    override val sorter: OptionalField<ListSorterType> = OptionalField.Missing,
+    override val displayOptions: ListDisplayOptionsPatch = ListDisplayOptionsPatch(),
 ) : AbstractPatchListBody {
 
     @Transient

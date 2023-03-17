@@ -42,7 +42,7 @@ private class ShowCollection(val user: Users.Id) : AbstractList<PatchShowCollect
 
         val updateBson = setOptionals(
             ShowCollectionDbo::shows setTo body.patchedItems(list.shows),
-            ShowCollectionDbo::displayOptions setTo body.displayOptions(list.displayOptions),
+            ShowCollectionDbo::displayOptions setTo body.displayOptions.patched(list.displayOptions),
         )
         if (updateBson != null) {
             ShowCollectionDbo.collection(ad.db).updateOne(
