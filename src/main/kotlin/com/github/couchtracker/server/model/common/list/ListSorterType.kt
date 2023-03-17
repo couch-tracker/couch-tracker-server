@@ -1,6 +1,7 @@
 package com.github.couchtracker.server.model.common.list
 
 import com.github.couchtracker.server.model.api.users.lists.ApiListItem
+import com.github.couchtracker.server.model.api.users.lists.ApiListItemGroupValue
 import com.github.couchtracker.server.util.list.ListSorter
 import com.github.couchtracker.server.util.list.SimpleListSorter
 import kotlinx.datetime.Instant
@@ -47,6 +48,8 @@ sealed class ListSorterType {
             override fun getComparable(index: Int, item: ApiListItem) = when (item) {
                 is ApiListItem.Show -> item.item.name
             }
+
+            override fun getGroup(comparable: String) = ApiListItemGroupValue.Initial(comparable)
         }
     }
 
@@ -56,6 +59,7 @@ sealed class ListSorterType {
 
         override fun getSorter() = object : SimpleListSorter<Instant>(direction) {
             override fun getComparable(index: Int, item: ApiListItem) = item.added
+            override fun getGroup(comparable: Instant) = ApiListItemGroupValue.Date(comparable)
         }
     }
 
@@ -78,6 +82,7 @@ sealed class ListSorterType {
             override fun getComparable(index: Int, item: ApiListItem) = when (item) {
                 is ApiListItem.Show -> item.item.ratings.avg()
             }
+            override fun getGroup(comparable: Double) = ApiListItemGroupValue.Rating(comparable)
         }
     }
 
@@ -89,6 +94,7 @@ sealed class ListSorterType {
             override fun getComparable(index: Int, item: ApiListItem) = when (item) {
                 is ApiListItem.Show -> TODO("To be implemented when personal rating is implemented")
             }
+            override fun getGroup(comparable: Double) = ApiListItemGroupValue.Rating(comparable)
         }
     }
 
@@ -102,6 +108,7 @@ sealed class ListSorterType {
             override fun getComparable(index: Int, item: ApiListItem): Instant? {
                 TODO("To be implemented when viewings are implemented")
             }
+            override fun getGroup(comparable: Instant) = ApiListItemGroupValue.Date(comparable)
         }
     }
 }
