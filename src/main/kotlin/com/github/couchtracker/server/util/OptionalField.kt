@@ -36,7 +36,7 @@ fun <T> OptionalField<T>.validate(validator: (T) -> Unit) {
     }
 }
 
-fun <T> OptionalField<T>.or(ifMissing: T) = when (this) {
+fun <T, R : T> OptionalField<T>.or(ifMissing: R) = when (this) {
     is OptionalField.Missing -> ifMissing
     is OptionalField.Present -> value
 }
