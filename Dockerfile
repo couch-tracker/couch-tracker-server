@@ -7,4 +7,4 @@ FROM openjdk:17
 EXPOSE 8080:8080
 RUN mkdir /app
 COPY --from=build /home/gradle/src/build/libs/couch-tracker-server.jar /app/couch-tracker-server.jar
-ENTRYPOINT ["java","-jar","/app/couch-tracker-server.jar"]
+ENTRYPOINT ["java", "-jar", "/app/couch-tracker-server.jar", "start" , "--all"]

@@ -1,12 +1,16 @@
 package com.github.couchtracker.server.model.db
 
+import com.github.couchtracker.server.ApplicationData
 import com.github.couchtracker.server.model.api.users.ApiUser
 import com.github.couchtracker.server.util.DboCompanion
 import com.github.couchtracker.server.util.Email
+import com.github.couchtracker.server.util.Password
 import com.github.couchtracker.server.util.Username
+import com.github.couchtracker.server.util.insertIgnoreDuplicate
 import org.litote.kmongo.Id
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.coroutine.CoroutineDatabase
+import org.litote.kmongo.newId
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
@@ -43,6 +47,27 @@ data class UserDbo(
         override suspend fun CoroutineCollection<UserDbo>.setup() {
             ensureUniqueIndex(UserDbo::username)
             ensureUniqueIndex(UserDbo::email)
+        }
+
+        suspend fun insert(
+            applicationData: ApplicationData,
+            username: Username,
+            email: Email,
+            password: Password,
+            name: String,
+        ): Boolean {
+            val hashedPassword = applicationData.config.argon2.hash(password)
+            val user = UserDbo(
+                id = newId(),
+                username = username.value,
+                email = email.value,
+                password = hashedPassword,
+                name = name,
+            )
+
+            return insertIgnoreDuplicate {
+                collection(applicationData.db).insertOne(user)
+            }
         }
     }
 }
