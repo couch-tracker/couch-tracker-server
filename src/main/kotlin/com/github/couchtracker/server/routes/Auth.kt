@@ -5,8 +5,9 @@ import com.github.couchtracker.server.JWT
 import com.github.couchtracker.server.accessPrincipal
 import com.github.couchtracker.server.config.SignupConfig
 import com.github.couchtracker.server.model.db.UserDbo
+import com.github.couchtracker.server.util.Email
 import com.github.couchtracker.server.util.Password
-import com.github.couchtracker.server.util.insertIgnoreDuplicate
+import com.github.couchtracker.server.util.Username
 import com.github.couchtracker.server.util.log
 import com.github.couchtracker.server.util.validate
 import io.ktor.http.HttpStatusCode
@@ -19,7 +20,6 @@ import io.ktor.server.resources.post
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import org.litote.kmongo.eq
-import org.litote.kmongo.newId
 import org.litote.kmongo.or
 import org.litote.kmongo.set
 import org.litote.kmongo.setTo
@@ -58,14 +58,13 @@ private class AuthRoutes {
     data class SignUp(val parent: AuthRoutes) {
         @Serializable
         data class Body(
-            val username: String,
-            val email: String,
+            val username: Username,
+            val email: Email,
             val password: Password,
             val name: String,
         ) {
             init {
                 password.validate().require()
-                require(name.isNotBlank()) { "Name cannot be blank" }
             }
         }
     }
@@ -144,18 +143,14 @@ private fun Route.signUp(ad: ApplicationData) = post<AuthRoutes.SignUp> {
 
     val body = call.receive<AuthRoutes.SignUp.Body>()
 
-    val hashedPassword = ad.config.argon2.hash(body.password)
-    val user = UserDbo(
-        id = newId(),
+    val inserted = UserDbo.insert(
+        applicationData = ad,
         username = body.username,
         email = body.email,
-        password = hashedPassword,
+        password = body.password,
         name = body.name,
     )
 
-    val inserted = insertIgnoreDuplicate {
-        UserDbo.collection(ad.db).insertOne(user)
-    }
     if (inserted) {
         call.respond(HttpStatusCode.Created)
     } else {

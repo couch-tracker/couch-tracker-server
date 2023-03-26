@@ -60,6 +60,7 @@ dependencies {
     implementation("com.sksamuel.hoplite:hoplite-toml:$hopliteVersion")
 
     // Other
+    implementation("com.github.ajalt.clikt:clikt:3.5.2")
     implementation("de.mkammerer:argon2-jvm:2.11")
 
     // TEST DEPENDENCIES

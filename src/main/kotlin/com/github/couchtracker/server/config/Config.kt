@@ -3,9 +3,6 @@ package com.github.couchtracker.server.config
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addFileSource
 import com.sksamuel.hoplite.sources.EnvironmentVariablesPropertySource
-import mu.KotlinLogging
-
-private val logger = KotlinLogging.logger { }
 
 data class Config(
     val logLevel: LogLevel = LogLevel.INFO,
@@ -20,7 +17,6 @@ data class Config(
 
     companion object {
         fun load(): Config {
-            logger.info { "Loading config..." }
             return ConfigLoaderBuilder
                 .default()
                 .addPropertySource(
@@ -35,8 +31,7 @@ data class Config(
                 .addFileSource("couch-tracker-dev-config.local.toml", optional = true, allowEmpty = true)
                 .addFileSource("couch-tracker-dev-config.toml", optional = true, allowEmpty = true)
                 .build()
-                .loadConfigOrThrow<Config>()
-                .also { logger.info { "Detected configuration: $it" } }
+                .loadConfigOrThrow()
         }
     }
 }
