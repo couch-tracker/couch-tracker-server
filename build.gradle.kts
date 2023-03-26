@@ -6,8 +6,8 @@ plugins {
     kotlin("jvm") version "1.8.10"
     kotlin("plugin.serialization") version "1.8.10"
     id("io.gitlab.arturbosch.detekt").version("1.22.0")
-    id("io.ktor.plugin") version "2.2.3"
-    id("com.github.ben-manes.versions") version "0.45.0"
+    id("io.ktor.plugin") version "2.2.4"
+    id("com.github.ben-manes.versions") version "0.46.0"
     application
 }
 
@@ -26,10 +26,10 @@ dependencies {
 
     // Utilities
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 
     // Ktor
-    val ktorVersion = "2.2.3"
+    val ktorVersion = "2.2.4"
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
@@ -44,7 +44,7 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
 
     // Logs
-    implementation("ch.qos.logback:logback-classic:1.4.5")
+    implementation("ch.qos.logback:logback-classic:1.4.6")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
     // Mongo
@@ -55,7 +55,7 @@ dependencies {
     implementation("com.uwetrottmann.tmdb2:tmdb-java:2.8.1")
 
     // Configuration parsing
-    val hopliteVersion = "2.7.1"
+    val hopliteVersion = "2.7.3"
     implementation("com.sksamuel.hoplite:hoplite-core:$hopliteVersion")
     implementation("com.sksamuel.hoplite:hoplite-toml:$hopliteVersion")
 
