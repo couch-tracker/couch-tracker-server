@@ -9,7 +9,7 @@ private const val MIN_LENGTH = 3
 value class Email(val value: String) {
 
     init {
-        require(value.length > MIN_LENGTH) { "Email must have at least 3 characters" }
+        require(value.length >= MIN_LENGTH) { "Email must have at least 3 characters" }
         require('@' in value) { "Email must contain @ sign" }
     }
 }
