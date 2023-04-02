@@ -2,47 +2,57 @@ package com.github.couchtracker.server.model.externalIds
 
 import com.github.couchtracker.server.model.common.externalIds.ExternalId
 import com.github.couchtracker.server.model.common.externalIds.TmdbExternalId
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import kotlin.test.assertEquals
+import io.kotest.assertions.json.shouldEqualJson
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class ExternalIdTests {
+class ExternalIdTests : FunSpec(
+    {
 
-    @Test
-    fun testDeserialize() {
-        val actual = Json.decodeFromString<ExternalId>("\"tmdb:1234\"")
-        assertEquals(TmdbExternalId(1234), actual)
+        context("deserialization") {
+            context("with main type") {
+                test("is successful") {
+                    val actual = Json.decodeFromString<ExternalId>("\"tmdb:1234\"")
+                    actual shouldBe TmdbExternalId(1234)
+                }
+                test("throws on invalid type") {
+                    shouldThrow<SerializationException> {
+                        Json.decodeFromString<ExternalId>("\"invalid:1234\"")
+                    }
+                }
+                test("throws on invalid id") {
+                    shouldThrow<SerializationException> {
+                        Json.decodeFromString<ExternalId>("\"tmdb:invalid\"")
+                    }
+                }
+            }
 
-        assertThrows<SerializationException> {
-            Json.decodeFromString<ExternalId>("\"tmdb:invalid\"")
+            context("with subtype") {
+                test("is successful") {
+                    val actual = Json.decodeFromString<TmdbExternalId>("\"tmdb:1234\"")
+                    actual shouldBe TmdbExternalId(1234)
+                }
+                test("throws on invalid type") {
+                    shouldThrow<SerializationException> {
+                        Json.decodeFromString<TmdbExternalId>("\"tvdb:1234\"")
+                    }
+                }
+                test("throws on invalid id") {
+                    shouldThrow<SerializationException> {
+                        Json.decodeFromString<TmdbExternalId>("\"tmdb:invalid\"")
+                    }
+                }
+            }
         }
 
-        assertThrows<SerializationException> {
-            Json.decodeFromString<ExternalId>("\"invalid:1234\"")
+        test("serialize") {
+            val actual = Json.encodeToString(TmdbExternalId(1234))
+            actual shouldEqualJson """ "tmdb:1234" """
         }
-    }
-
-    @Test
-    fun testDeserializeSubtype() {
-        val actual = Json.decodeFromString<TmdbExternalId>("\"tmdb:1234\"")
-        assertEquals(TmdbExternalId(1234), actual)
-
-        assertThrows<SerializationException> {
-            Json.decodeFromString<TmdbExternalId>("\"tmdb:invalid\"")
-        }
-
-        assertThrows<SerializationException> {
-            Json.decodeFromString<TmdbExternalId>("\"tvdb:1234\"")
-        }
-    }
-
-    @Test
-    fun testSerialize() {
-        val actual = Json.encodeToString(TmdbExternalId(1234))
-        assertEquals("\"tmdb:1234\"", actual)
-    }
-}
+    },
+)

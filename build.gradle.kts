@@ -64,8 +64,11 @@ dependencies {
     implementation("de.mkammerer:argon2-jvm:2.11")
 
     // TEST DEPENDENCIES
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
-    testImplementation(kotlin("test"))
+    val kotestVersion = "5.5.5"
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-framework-datatest:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-json:$kotestVersion")
 }
 
 tasks.test {
