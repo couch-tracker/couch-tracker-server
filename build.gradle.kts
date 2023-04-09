@@ -19,6 +19,7 @@ repositories {
 }
 kotlin {
     jvmToolchain(17)
+    jvmToolchain(11)
 }
 
 dependencies {
@@ -59,6 +60,11 @@ dependencies {
     implementation("com.sksamuel.hoplite:hoplite-core:$hopliteVersion")
     implementation("com.sksamuel.hoplite:hoplite-toml:$hopliteVersion")
 
+    // Koin
+    val koinVersion = "3.4.0"
+    implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("io.insert-koin:koin-ktor:$koinVersion")
+
     // Other
     implementation("com.github.ajalt.clikt:clikt:3.5.2")
     implementation("de.mkammerer:argon2-jvm:2.11")
@@ -69,7 +75,11 @@ dependencies {
     testImplementation("io.kotest:kotest-framework-datatest:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-json:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-ktor:4.4.3")
+    testImplementation("io.insert-koin:koin-test:$koinVersion")
     testImplementation("io.mockk:mockk:1.13.4")
+    testImplementation("de.bwaldvogel:mongo-java-server:1.43.0")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.test {
