@@ -2,6 +2,7 @@ package com.github.couchtracker.server.util.serializers
 
 import io.ktor.util.converters.DataConversion
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -18,11 +19,21 @@ abstract class StringSerializer<T : Any>(
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(name, PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: T) {
-        encoder.encodeString(serialize(value))
+        val string = try {
+            serialize(value)
+        } catch (e: IllegalArgumentException) {
+            throw SerializationException(e)
+        }
+        encoder.encodeString(string)
     }
 
     override fun deserialize(decoder: Decoder): T {
-        return deserialize(decoder.decodeString())
+        val string = decoder.decodeString()
+        return try {
+            deserialize(string)
+        } catch (e: IllegalArgumentException) {
+            throw SerializationException(e)
+        }
     }
 }
 
