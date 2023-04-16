@@ -8,8 +8,8 @@ value class Password(val value: String) {
 
     fun validate() = runValidations {
         validate(value.length >= MIN_LENGTH) { "Password must be at least $MIN_LENGTH characters long" }
-        validate(!FORBIDDEN_CHARACTERS.containsMatchIn(value)) {
-            "Password contains invalid characters. Only printable ASCII characters are allowed"
+        validate(value.all { it.category !in FORBIDDEN_CHARACTER_CATEGORIES }) {
+            "Password contains invalid characters: control, format, private use and unassigned unicode code points are forbidden"
         }
         validate(CHARACTER_SETS.count { it.containsMatchIn(value) } >= MIN_CHARACTER_SETS) {
             "Password must contain at least three from: lowercase, uppercase, numbers, symbols"
@@ -26,7 +26,11 @@ value class Password(val value: String) {
             "[^a-zA-Z0-9]".toRegex(),
         )
 
-        // Only non-control ASCII are allowed
-        private val FORBIDDEN_CHARACTERS = "[^\\u0020-\\u007E]".toRegex()
+        private val FORBIDDEN_CHARACTER_CATEGORIES = listOf(
+            CharCategory.PRIVATE_USE,
+            CharCategory.CONTROL,
+            CharCategory.UNASSIGNED,
+            CharCategory.FORMAT,
+        )
     }
 }
