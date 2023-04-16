@@ -5,7 +5,7 @@ import com.github.couchtracker.server.infoProviders.InfoProvider
 import com.github.couchtracker.server.infoProviders.ids.TmdbShowId
 import com.github.couchtracker.server.model.common.externalIds.ExternalId
 import com.github.couchtracker.server.model.common.externalIds.TmdbExternalId
-import com.github.couchtracker.server.util.makeNotNull
+import com.github.couchtracker.server.util.asNotNull
 import retrofit2.await
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.seconds
@@ -30,7 +30,7 @@ class Tmdb(config: TmdbConfig, scope: CoroutineScope) : InfoProvider {
 
     private val configuration = flow {
         while (true) {
-            emit(client.configurationService().configuration().makeNotNull().await())
+            emit(client.configurationService().configuration().asNotNull().await())
             delay(1.days)
         }
     }

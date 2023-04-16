@@ -9,9 +9,9 @@ import com.github.couchtracker.server.model.common.Video
 import com.github.couchtracker.server.model.db.ShowDbo
 import com.github.couchtracker.server.model.db.shows
 import com.github.couchtracker.server.model.infoProviders.ShowInfo
+import com.github.couchtracker.server.util.asNotNull
 import com.github.couchtracker.server.util.cacheActor
 import com.github.couchtracker.server.util.get
-import com.github.couchtracker.server.util.makeNotNull
 import com.uwetrottmann.tmdb2.entities.AppendToResponse
 import com.uwetrottmann.tmdb2.entities.TvShow
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem
@@ -43,7 +43,7 @@ class TmdbTvApis(val client: TmdbClient, val tmdb: Tmdb, scope: CoroutineScope) 
                 AppendToResponseItem.TRANSLATIONS,
                 AppendToResponseItem.VIDEOS,
             ),
-        ).makeNotNull().await()
+        ).asNotNull().await()
     }
 
     override fun show(id: TmdbShowId) = object : ShowApis {
